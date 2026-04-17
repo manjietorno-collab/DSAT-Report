@@ -127,11 +127,11 @@
 <nav class="nav">
   <div class="nav-brand">DSAT<span>·</span>Report <small>QA Evaluator: Kristine Amor Ortega</small></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('dashboard', this)">📊 Dashboard</button>
-    <button class="nav-tab" onclick="showPage('weekly', this)">📅 Weekly Breakdown</button>
-    <button class="nav-tab" onclick="showPage('log', this)">🗂 DSAT Log</button>
-    <button class="nav-tab" onclick="showPage('coaching', this)">🎯 Coaching</button>
-    <button class="nav-tab" onclick="showPage('insights', this)">💡 Insights</button>
+    <button class="nav-tab active" data-page="dashboard">📊 Dashboard</button>
+    <button class="nav-tab" data-page="weekly">📅 Weekly Breakdown</button>
+    <button class="nav-tab" data-page="log">🗂 DSAT Log</button>
+    <button class="nav-tab" data-page="coaching">🎯 Coaching</button>
+    <button class="nav-tab" data-page="insights">💡 Insights</button>
   </div>
   <div style="font-size:.75rem; color:rgba(255,255,255,.5)">April 1–14, 2026 &nbsp;|&nbsp; MTD</div>
 </nav>
@@ -330,6 +330,8 @@
     </div>
   </div>
 
+</div>
+
 <!-- ═══ WEEKLY BREAKDOWN ═══ -->
 <div id="page-weekly" class="page">
   <div class="section-title">Weekly Breakdown — April 2026</div>
@@ -418,14 +420,14 @@
   <div class="panel">
     <div class="flex-between" style="margin-bottom:14px">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <select id="filter-l1" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;" onchange="filterLog()">
+        <select id="filter-l1" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;">
           <option value="">All L1 Reasons</option>
           <option>Product Related</option>
           <option>Resource Constraints</option>
           <option>Support Related</option>
           <option>Billing Related</option>
         </select>
-        <select id="filter-valid" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;" onchange="filterLog()">
+        <select id="filter-valid" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;">
           <option value="">All</option>
           <option value="Yes">Valid DSATs only</option>
           <option value="No">For Removal only</option>
@@ -624,17 +626,29 @@ function l1Class(l1) {
   return 'l1-other';
 }
 
-function showPage(id, el) {
+function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  if (el) el.classList.add('active');
+  const btn = document.querySelector('[data-page="' + id + '"]');
+  if (btn) btn.classList.add('active');
 }
 
 // ── INIT ─────────────────────────────────────────────────────
 renderLog(LOG_DATA);
 renderCoaching();
 renderInsights();
+
+// Wire up nav tabs
+document.querySelectorAll('.nav-tab[data-page]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    showPage(this.getAttribute('data-page'));
+  });
+});
+
+// Wire up log filters
+document.getElementById('filter-l1').addEventListener('change', filterLog);
+document.getElementById('filter-valid').addEventListener('change', filterLog);
 </script>
 </body>
 </html>

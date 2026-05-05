@@ -3,652 +3,1270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DSAT Weekly Report · April 2026 · PandaDoc Support</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>DSAT Dashboard · April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #f4f6f9; --surface: #ffffff; --surface2: #f0f3f8; --surface3: #e4e9f2;
-    --border: #d0d7e8; --accent: #21c45d; --accent2: #f97316; --accent3: #2563eb;
-    --accent4: #7c3aed; --red: #dc2626; --yellow: #d97706; --text: #0a2540;
-    --muted: #64748b; --muted2: #334155; --radius: 10px; --shadow: 0 2px 12px rgba(10,37,64,0.08);
-    --pd-green: #21c45d; --pd-dark: #0a2540; --pd-teal: #0ea5a0;
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f8f9fb;
+    --surface3: #eef0f4;
+    --border: #e2e5eb;
+    --border2: #d0d5de;
+    --text: #111827;
+    --text2: #374151;
+    --text3: #6b7280;
+    --accent: #2563eb;
+    --accent2: #1d4ed8;
+    --green: #16a34a;
+    --red: #dc2626;
+    --amber: #d97706;
+    --purple: #7c3aed;
+    --teal: #0d9488;
+    --pink: #db2777;
+    --orange: #ea580c;
+    --chart-1: #2563eb;
+    --chart-2: #ea580c;
+    --chart-3: #dc2626;
+    --chart-4: #16a34a;
+    --chart-5: #7c3aed;
+    --chart-6: #0891b2;
+    --chart-7: #db2777;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 2px solid var(--pd-green); background: var(--pd-dark); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px; }
-  .nav-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: -.5px; color: #fff; }
-  .nav-brand span { color: var(--pd-green); } .nav-brand small { font-size:.7rem; color: rgba(255,255,255,.5); font-weight:400; margin-left:8px; }
-  .nav-tabs { display: flex; gap: 4px; flex-wrap:wrap; }
-  .nav-tab { padding: 6px 14px; border-radius: 6px; font-size: .8rem; font-weight: 600; cursor: pointer; border: none; background: transparent; color: rgba(255,255,255,.55); transition: all .2s; }
-  .nav-tab.active, .nav-tab:hover { background: rgba(255,255,255,.12); color: #fff; }
-  .nav-tab.active { color: var(--pd-green); }
-  .page { display: none; padding: 28px; max-width: 1400px; margin: 0 auto; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon {
+    width: 32px; height: 32px; background: var(--green);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff; letter-spacing: -1px;
+  }
+  .logo-text { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+  .divider-v { width: 1px; height: 20px; background: var(--border2); }
+  .header-title { font-size: 13px; color: var(--text2); font-weight: 400; }
+  .header-badge {
+    background: rgba(37,99,235,.08); color: var(--accent);
+    border: 1px solid rgba(37,99,235,.2);
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0 28px;
+    display: flex; gap: 0;
+  }
+  .tab {
+    padding: 13px 18px; font-size: 12.5px; font-weight: 500;
+    color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s; white-space: nowrap; user-select: none;
+  }
+  .tab:hover { color: var(--text2); background: var(--surface2); }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .6px; }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-select, .filter-input {
+    background: var(--surface); border: 1px solid var(--border2);
+    color: var(--text); border-radius: 6px; padding: 6px 10px;
+    font-size: 12px; font-family: 'Sora', sans-serif;
+    outline: none; cursor: pointer; min-width: 130px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .filter-select:focus, .filter-input:focus { border-color: var(--accent); outline: 2px solid rgba(37,99,235,.12); }
+  .filter-btn {
+    background: var(--surface); border: 1px solid var(--border2);
+    color: var(--text2); border-radius: 6px; padding: 6px 14px;
+    font-size: 12px; cursor: pointer; transition: all .15s;
+    font-family: 'Sora', sans-serif; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: rgba(37,99,235,.08); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .filter-sep { width: 1px; height: 24px; background: var(--border); }
+  .date-range-group { display: flex; align-items: center; gap: 6px; }
+  .date-range-group span { font-size: 11px; color: var(--text3); }
+
+  /* ── CONTENT ── */
+  .page { display: none; padding: 24px 28px; }
   .page.active { display: block; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
-  .section-sub { color: var(--muted2); font-size: .85rem; margin-bottom: 24px; }
-  .cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; position: relative; overflow: hidden; }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-accent, var(--accent)); }
-  .card-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; }
-  .card-value { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
-  .card-sub { font-size: .76rem; margin-top: 6px; color: var(--muted2); }
-  .card-highlight { color: var(--accent); font-weight: 700; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
-  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-bottom: 22px; }
-  @media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
-  .panel-title { font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .panel-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dot-color, var(--accent)); flex-shrink: 0; }
-  .bar-list { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── KPI ROW ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; position: relative; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .kpi::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--kpi-color, var(--accent));
+  }
+  .kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; font-weight: 500; }
+  .kpi-value { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; font-family: 'DM Mono', monospace; }
+  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+  .kpi-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-top: 6px;
+  }
+  .kpi-badge.green { background: rgba(22,163,74,.1); color: var(--green); }
+  .kpi-badge.red { background: rgba(220,38,38,.1); color: var(--red); }
+  .kpi-badge.amber { background: rgba(217,119,6,.1); color: var(--amber); }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-12 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px; }
+  .grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 900px) { .grid-2, .grid-3, .grid-12, .grid-21 { grid-template-columns: 1fr; } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .card-header {
+    padding: 14px 18px 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface2);
+  }
+  .card-title { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .card-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .card-body { padding: 18px; }
+  .card-body-sm { padding: 14px 18px; }
+
+  /* ── CHART WRAPPERS ── */
+  .chart-wrap { position: relative; }
+  .chart-wrap canvas { max-height: 220px; }
+  .chart-wrap-tall canvas { max-height: 280px; }
+  .chart-wrap-md canvas { max-height: 200px; }
+
+  /* ── BAR LISTS ── */
+  .bar-list { display: flex; flex-direction: column; gap: 9px; }
   .bar-item { display: flex; flex-direction: column; gap: 4px; }
-  .bar-info { display: flex; justify-content: space-between; font-size: .78rem; }
-  .bar-label { color: var(--muted2); max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bar-count { font-family: 'DM Mono', monospace; font-weight: 500; }
-  .bar-track { height: 7px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; }
-  .tbl-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: .8rem; }
-  thead th { background: var(--surface2); padding: 9px 12px; text-align: left; font-weight: 600; font-size: .72rem; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
-  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; line-height: 1.4; }
-  tbody tr:hover td { background: var(--surface2); }
-  tbody tr:last-child td { border-bottom: none; }
-  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
-  .badge-green { background: #dcfce7; color: #15803d; }
-  .badge-red { background: #fee2e2; color: #b91c1c; }
-  .badge-yellow { background: #fef3c7; color: #92400e; }
-  .badge-blue { background: #dbeafe; color: #1d4ed8; }
-  .badge-purple { background: #ede9fe; color: #6d28d9; }
-  .badge-orange { background: #ffedd5; color: #c2410c; }
-  .badge-gray { background: var(--surface3); color: var(--muted2); }
-  .mono { font-family: 'DM Mono', monospace; font-size: .78rem; color: var(--accent3); }
-  .l1-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .7rem; font-weight: 700; white-space:nowrap; }
-  .l1-support { background: #fee2e2; color: #b91c1c; }
-  .l1-product { background: #dbeafe; color: #1d4ed8; }
-  .l1-resource { background: #ede9fe; color: #6d28d9; }
-  .l1-billing { background: #dcfce7; color: #15803d; }
-  .l1-process { background: #fef3c7; color: #92400e; }
-  .l1-tools { background: #ffedd5; color: #c2410c; }
-  .l1-customer { background: var(--surface3); color: var(--muted2); }
-  .l1-other { background: var(--surface3); color: var(--muted2); }
-  .insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; border-left: 4px solid var(--ic-color, var(--accent)); box-shadow: var(--shadow); }
-  .insight-cat { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--ic-color, var(--accent)); margin-bottom: 6px; }
-  .insight-finding { font-size: .85rem; line-height: 1.6; margin-bottom: 8px; color: var(--text); }
-  .insight-action { font-size: .8rem; color: var(--muted2); padding: 8px 12px; background: var(--surface2); border-radius: 6px; }
-  .insight-action strong { color: var(--text); }
-  .coach-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 10px; box-shadow: var(--shadow); }
-  .coach-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .coach-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--pd-dark); }
-  .coach-team { font-size: .75rem; color: var(--muted); margin-top: 2px; }
-  .coach-scores { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .score-pill { display: flex; flex-direction: column; align-items: center; background: var(--surface2); border-radius: 8px; padding: 8px 14px; min-width: 64px; border: 1px solid var(--border); }
-  .score-val { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
-  .score-lbl { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-top: 2px; }
-  .skill-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-  .skill-tag { font-size: .72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-  .skill-meet { background: #dcfce7; color: #15803d; }
-  .skill-need { background: #fee2e2; color: #b91c1c; }
-  .afi-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 14px; font-size: .8rem; line-height: 1.6; color: var(--text); }
-  .afi-box strong { color: #92400e; }
-  .rec-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
-  .rec-coaching { background: #fee2e2; color: #b91c1c; }
-  .rec-minor { background: #fef3c7; color: #92400e; }
-  .rec-none { background: #dcfce7; color: #15803d; }
-  .rec-recog { background: #dbeafe; color: #1d4ed8; }
-  .flex-between { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-  .week-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 22px; }
-  .week-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; box-shadow: var(--shadow); }
-  .week-block.current { border-color: var(--pd-green); border-width: 2px; background: #f0fdf4; }
-  .week-lbl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
-  .week-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--pd-dark); }
-  .week-dates { font-size: .68rem; color: var(--muted); margin-top: 4px; }
-  .week-breakdown { font-size: .72rem; color: var(--muted2); margin-top: 6px; line-height: 1.5; }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-  .notice { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; font-size: .8rem; color: #1d4ed8; margin-bottom: 18px; }
-  .summary-stat { display: flex; align-items: baseline; gap: 8px; }
-  .summary-stat .big { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; }
-  .summary-stat .lbl { font-size: .78rem; color: var(--muted2); }
+  .bar-item-header { display: flex; justify-content: space-between; align-items: center; }
+  .bar-item-label { font-size: 11.5px; color: var(--text2); max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-item-value { font-size: 11.5px; color: var(--text); font-family: 'DM Mono', monospace; font-weight: 500; }
+  .bar-track { height: 5px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+  /* ── ATTRIBUTION PILLS ── */
+  .attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .attr-card {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; text-align: center;
+  }
+  .attr-value { font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; line-height: 1; }
+  .attr-label { font-size: 11px; color: var(--text3); margin-top: 5px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600;
+    color: var(--text3); text-transform: uppercase; letter-spacing: .5px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+    background: var(--surface2); cursor: pointer; user-select: none;
+    border-top: 1px solid var(--border);
+  }
+  thead th:hover { color: var(--text2); }
+  thead th .sort-icon { opacity: .4; margin-left: 4px; }
+  thead th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  tbody tr:hover { background: #f0f7ff; }
+  tbody td { padding: 10px 14px; font-size: 12px; color: var(--text2); vertical-align: top; }
+  tbody td:first-child { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+  .td-primary { color: var(--text) !important; font-weight: 500; }
+  .td-mono { font-family: 'DM Mono', monospace; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10.5px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-valid { background: rgba(220,38,38,.1); color: #dc2626; border: 1px solid rgba(220,38,38,.2); }
+  .badge-removal { background: rgba(22,163,74,.1); color: #16a34a; border: 1px solid rgba(22,163,74,.2); }
+  .badge-product { background: rgba(37,99,235,.1); color: #2563eb; border: 1px solid rgba(37,99,235,.2); }
+  .badge-billing { background: rgba(217,119,6,.1); color: #d97706; border: 1px solid rgba(217,119,6,.2); }
+  .badge-support { background: rgba(220,38,38,.1); color: #dc2626; border: 1px solid rgba(220,38,38,.2); }
+  .badge-resource { background: rgba(234,88,12,.1); color: #ea580c; border: 1px solid rgba(234,88,12,.2); }
+  .badge-process { background: rgba(13,148,136,.1); color: #0d9488; border: 1px solid rgba(13,148,136,.2); }
+  .badge-customer { background: rgba(124,58,237,.1); color: #7c3aed; border: 1px solid rgba(124,58,237,.2); }
+  .badge-other { background: rgba(107,114,128,.1); color: #6b7280; border: 1px solid rgba(107,114,128,.2); }
+  .rating-1 { color: #dc2626; font-weight: 700; }
+  .rating-2 { color: #d97706; font-weight: 700; }
+  .rating-3 { color: #16a34a; font-weight: 700; }
+
+  /* ── INSIGHT CALLOUTS ── */
+  .insight-box {
+    background: #f8faff; border: 1px solid #dbeafe;
+    border-left: 3px solid var(--accent); border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 12px;
+  }
+  .insight-box.amber { border-left-color: var(--amber); background: #fffbf0; border-color: #fde68a; }
+  .insight-box.green { border-left-color: var(--green); background: #f0fdf4; border-color: #bbf7d0; }
+  .insight-box.red { border-left-color: var(--red); background: #fff5f5; border-color: #fecaca; }
+  .insight-box.purple { border-left-color: var(--purple); background: #faf5ff; border-color: #e9d5ff; }
+  .insight-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .insight-body { font-size: 11.5px; color: var(--text2); line-height: 1.7; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: .8px; font-weight: 600;
+    color: var(--text3); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+
+  /* ── WEEK PILLS ── */
+  .week-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .week-pill {
+    padding: 5px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border2); color: var(--text2); background: var(--surface);
+    transition: all .15s; user-select: none; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .week-pill:hover { border-color: var(--accent); color: var(--accent); background: #eff6ff; }
+  .week-pill.active { background: rgba(37,99,235,.1); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  /* ── PAGINATION ── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--border); }
+  .pagination-info { font-size: 11.5px; color: var(--text3); }
+  .pagination-btns { display: flex; gap: 6px; }
+  .page-btn {
+    width: 30px; height: 28px; border-radius: 6px; border: 1px solid var(--border2);
+    background: var(--surface); color: var(--text2); cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; transition: all .15s;
+    font-family: 'Sora', sans-serif; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #eff6ff; }
+  .page-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .page-btn.active { background: rgba(37,99,235,.15); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  /* ── TOOLTIP ── */
+  .tooltip-cell { position: relative; cursor: help; }
+  .tooltip-cell:hover .tooltip-content { display: block; }
+  .tooltip-content {
+    display: none; position: absolute; bottom: 100%; left: 0; z-index: 200;
+    background: #1f2937; border: 1px solid #374151; border-radius: 8px;
+    padding: 10px 12px; font-size: 11.5px; color: #e5e7eb; width: 280px;
+    line-height: 1.6; white-space: normal; pointer-events: none; margin-bottom: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+
+  /* ── NO RESULTS ── */
+  .no-results {
+    text-align: center; padding: 48px 24px; color: var(--text3);
+    font-size: 13px;
+  }
+  .no-results-icon { font-size: 32px; margin-bottom: 10px; }
+
+  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--surface2); }
-  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
-  .print-note { display: none; }
-  @media print { .nav { display:none; } .page { display:block!important; padding:16px; } .print-note { display:block; } }
-  .qa-bar { display: flex; align-items: center; gap: 8px; }
-  .qa-val { font-family: 'DM Mono', monospace; font-size: .78rem; min-width: 38px; }
-  .qa-track { flex: 1; height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
-  .qa-fill { height: 100%; border-radius: 3px; }
-  .goal-line { font-size: .68rem; color: var(--muted); }
-  .highlight-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 18px; box-shadow: var(--shadow); }
-  .highlight-box.warn { background: #fff7ed; border-color: #fed7aa; }
-  .highlight-box.info { background: #eff6ff; border-color: #bfdbfe; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+  /* ── AGENT TABLE ── */
+  .agent-bar { height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 4px; }
+  .agent-bar-fill { height: 100%; border-radius: 2px; }
+  .qa-pill {
+    display: inline-block; padding: 1px 7px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+  }
+  .qa-green { background: rgba(22,163,74,.1); color: var(--green); border: 1px solid rgba(22,163,74,.2); }
+  .qa-amber { background: rgba(217,119,6,.1); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+  .qa-red { background: rgba(220,38,38,.1); color: var(--red); border: 1px solid rgba(220,38,38,.2); }
+
+  /* ── INSIGHT PAGE ── */
+  .insight-section { margin-bottom: 28px; }
+  .insight-month-header {
+    font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .month-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .rank-table { width: 100%; }
+  .rank-row {
+    display: flex; align-items: center; gap: 12px; padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-num { width: 22px; height: 22px; border-radius: 5px; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+  .rank-num.top { background: rgba(37,99,235,.12); color: var(--accent); border-color: rgba(37,99,235,.25); }
+  .rank-info { flex: 1; }
+  .rank-name { font-size: 12.5px; font-weight: 500; color: var(--text); }
+  .rank-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .rank-count { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; color: var(--text); }
+  .rank-pct { font-size: 11px; color: var(--text3); }
+  .rank-bar-wrap { width: 80px; }
+  .rank-bar { height: 4px; background: #e5e7eb; border-radius: 2px; }
+  .rank-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-brand">DSAT<span>·</span>Report <small>QA Evaluator: Kristine Amor Ortega</small></div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-page="dashboard">📊 Dashboard</button>
-    <button class="nav-tab" data-page="weekly">📅 Weekly Breakdown</button>
-    <button class="nav-tab" data-page="log">🗂 DSAT Log</button>
-    <button class="nav-tab" data-page="coaching">🎯 Coaching</button>
-    <button class="nav-tab" data-page="insights">💡 Insights</button>
+<div class="header">
+  <div class="header-left">
+    <div class="logo">
+      <div class="logo-icon">PD</div>
+      <span class="logo-text">DSAT Dashboard</span>
+    </div>
+    <div class="divider-v"></div>
+    <span class="header-title">Support Quality & Operations</span>
   </div>
-  <div style="font-size:.75rem; color:rgba(255,255,255,.5)">April 1–14, 2026 &nbsp;|&nbsp; MTD</div>
-</nav>
+  <span class="header-badge">April 2026 · Q2</span>
+</div>
 
-<!-- ═══ DASHBOARD ═══ -->
-<div id="page-dashboard" class="page active">
-  <div class="flex-between">
-    <div>
-      <div class="section-title">April 2026 — DSAT Summary</div>
-      <div class="section-sub">Period: April 1–14, 2026 · 21 conversations reviewed · Evaluator: Kristine Amor Ortega</div>
-    </div>
-  </div>
+<div class="tabs">
+  <div class="tab active" data-page="dashboard">📊 Dashboard</div>
+  <div class="tab" data-page="weekly">📅 Weekly Breakdown</div>
+  <div class="tab" data-page="log">🗂 DSAT Log</div>
+  <div class="tab" data-page="coaching">🎯 Coaching</div>
+  <div class="tab" data-page="insights">💡 Insights</div>
+</div>
 
-  <div class="cards-row">
-    <div class="card" style="--card-accent:#2563eb">
-      <div class="card-label">Total Reviewed</div>
-      <div class="card-value">21</div>
-      <div class="card-sub">Conversations evaluated</div>
-    </div>
-    <div class="card" style="--card-accent:#21c45d">
-      <div class="card-label">For Removal</div>
-      <div class="card-value">19</div>
-      <div class="card-sub"><span class="card-highlight">90.5%</span> not agent-driven</div>
-    </div>
-    <div class="card" style="--card-accent:#dc2626">
-      <div class="card-label">Valid DSATs</div>
-      <div class="card-value">2</div>
-      <div class="card-sub">Require coaching action</div>
-    </div>
-    <div class="card" style="--card-accent:#0a2540">
-      <div class="card-label">Avg QA Score</div>
-      <div class="card-value">95.4%</div>
-      <div class="card-sub">Goal: 85% · <span class="card-highlight">+10.4pp above goal</span></div>
-    </div>
-    <div class="card" style="--card-accent:#7c3aed">
-      <div class="card-label">Product-Driven</div>
-      <div class="card-value">10</div>
-      <div class="card-sub">47.6% of all DSATs</div>
-    </div>
-    <div class="card" style="--card-accent:#f97316">
-      <div class="card-label">Resource Constraint</div>
-      <div class="card-value">8</div>
-      <div class="card-sub">38.1% · Delays & routing</div>
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label">Filter</span>
+  <div class="filter-group">
+    <span style="font-size:11px;color:var(--text3)">Date Range:</span>
+    <div class="date-range-group">
+      <input type="date" class="filter-input" id="dateFrom" value="2026-04-01" style="min-width:120px">
+      <span>→</span>
+      <input type="date" class="filter-input" id="dateTo" value="2026-04-30" style="min-width:120px">
     </div>
   </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span style="font-size:11px;color:var(--text3)">L1 Reason:</span>
+    <select class="filter-select" id="filterL1">
+      <option value="">All</option>
+      <option>Product Related</option>
+      <option>Billing Related</option>
+      <option>Support Related</option>
+      <option>Resource Constraint</option>
+      <option>Process Related</option>
+      <option>Customer Related</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span style="font-size:11px;color:var(--text3)">Verdict:</span>
+    <button class="filter-btn active" data-filter-rec="all">All</button>
+    <button class="filter-btn" data-filter-rec="DSAT is valid">Valid</button>
+    <button class="filter-btn" data-filter-rec="For Removal">Removal</button>
+  </div>
+  <div class="filter-group">
+    <span style="font-size:11px;color:var(--text3)">Agent:</span>
+    <select class="filter-select" id="filterAgent">
+      <option value="">All Agents</option>
+    </select>
+  </div>
+  <button class="filter-btn" id="resetFilters" style="margin-left:auto">↺ Reset</button>
+</div>
 
-  <!-- Key callouts -->
-  <div class="grid3">
-    <div class="highlight-box">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px">✅ Top Strength</div>
-      <div style="font-size:.85rem;line-height:1.6">Average QA score of <strong>95.4%</strong> is <strong>10.4pp above</strong> the 85% goal. 17 of 21 agents scored 88%+. Strong team-wide performance.</div>
+
+<!-- ═══════════════ DASHBOARD TAB ═══════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi" style="--kpi-color:var(--accent)">
+      <div class="kpi-label">Total DSATs</div>
+      <div class="kpi-value" id="kpi-total">—</div>
+      <div class="kpi-sub">April 2026</div>
     </div>
-    <div class="highlight-box warn">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:6px">🔧 Top Product Issues</div>
-      <div style="font-size:.83rem;line-height:1.7">
-        <div style="display:flex;flex-direction:column;gap:5px;margin-top:2px">
-          <span><span class="badge badge-blue" style="margin-right:6px">3 cases</span>Integration failures — HubSpot &amp; Salesforce (no fix ETA)</span>
-          <span><span class="badge badge-gray" style="margin-right:6px">5 cases</span>Unclassified product issues (mobile, email delivery, doc processing)</span>
-          <span><span class="badge badge-purple" style="margin-right:6px">2 cases</span>New UI / Workflow Builder changes caught customers mid-workflow</span>
-          <span><span class="badge badge-yellow" style="margin-right:6px">1 case</span>Feature not available — workspace doc transfer</span>
+    <div class="kpi" style="--kpi-color:var(--red)">
+      <div class="kpi-label">Valid DSATs</div>
+      <div class="kpi-value" id="kpi-valid">—</div>
+      <div class="kpi-badge red" id="kpi-valid-pct">—</div>
+    </div>
+    <div class="kpi" style="--kpi-color:var(--green)">
+      <div class="kpi-label">For Removal</div>
+      <div class="kpi-value" id="kpi-removal">—</div>
+      <div class="kpi-badge green" id="kpi-removal-pct">—</div>
+    </div>
+    <div class="kpi" style="--kpi-color:var(--amber)">
+      <div class="kpi-label">Avg QA Score</div>
+      <div class="kpi-value" id="kpi-qa">—</div>
+      <div class="kpi-sub">Across filtered set</div>
+    </div>
+    <div class="kpi" style="--kpi-color:var(--purple)">
+      <div class="kpi-label">Agents Impacted</div>
+      <div class="kpi-value" id="kpi-agents">—</div>
+      <div class="kpi-sub">Unique agents</div>
+    </div>
+    <div class="kpi" style="--kpi-color:var(--teal)">
+      <div class="kpi-label">Top L1 Reason</div>
+      <div class="kpi-value" style="font-size:16px;font-family:'Sora',sans-serif;font-weight:600;" id="kpi-top-l1">—</div>
+      <div class="kpi-sub" id="kpi-top-l1-pct">—</div>
+    </div>
+  </div>
+
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Weekly DSAT Trend</div>
+          <div class="card-sub">Total DSATs and valid DSATs by week</div>
         </div>
       </div>
+      <div class="card-body">
+        <div class="chart-wrap-tall"><canvas id="chartWeeklyTrend"></canvas></div>
+      </div>
     </div>
-    <div class="highlight-box info">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent3);margin-bottom:6px">⏱ Resource Constraint Drivers</div>
-      <div style="font-size:.83rem;line-height:1.7">
-        <div style="display:flex;flex-direction:column;gap:5px;margin-top:2px">
-          <span><span class="badge badge-red" style="margin-right:6px">5 cases</span>Delayed 12h+ before first response (62.5% of resource DSATs)</span>
-          <span><span class="badge badge-yellow" style="margin-right:6px">2 cases</span>Delayed 1–4h — customer unresponsive after wait</span>
-          <span><span class="badge badge-gray" style="margin-right:6px">1 case</span>Delayed 4–8h — issue self-resolved before investigation</span>
-          <span><span class="badge badge-gray" style="margin-right:6px">1 case</span>Premature ticket routing — customer asked not to create ticket</span>
-        </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">DSAT by L1 Reason</div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap-tall"><canvas id="chartL1Donut"></canvas></div>
       </div>
     </div>
   </div>
 
-  <div class="grid2">
-    <!-- L1 Reason Distribution -->
-    <div class="panel" style="grid-column:1/-1">
-      <div class="panel-title"><span class="dot" style="--dot-color:#f97316"></span>DSAT Reason Breakdown (L1)</div>
-      <div class="bar-list">
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label"><span class="l1-tag l1-product">Product Related</span></span><span class="bar-count" style="color:var(--accent3)">10 (47.6%) · Avg QA 98.8%</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:47.6%;background:#60a5fa"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label"><span class="l1-tag l1-resource">Resource Constraint</span></span><span class="bar-count" style="color:var(--accent4)">8 (38.1%) · Avg QA 95.5%</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:38.1%;background:#e879f9"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label"><span class="l1-tag l1-support">Support Related</span></span><span class="bar-count" style="color:var(--red)">2 (9.5%) · Avg QA 84.0%</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:9.5%;background:#f87171"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label"><span class="l1-tag l1-billing">Billing Related</span></span><span class="bar-count" style="color:var(--accent)">1 (4.8%) · Avg QA 84.0%</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:4.8%;background:#4ade80"></div></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">L2 Issue Type — Top 9</div>
+          <div class="card-sub">What category of issue triggered the DSAT</div>
         </div>
       </div>
-      <hr class="divider">
-      <div style="font-size:.75rem;color:var(--muted2)">
-        <strong style="color:var(--accent)">19 of 21 (90.5%)</strong> recommended for CSAT removal · 
-        <strong style="color:var(--red)">2 of 21 (9.5%)</strong> valid / coaching required
+      <div class="card-body">
+        <div id="l2BarList" class="bar-list"></div>
       </div>
     </div>
-
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">L3 Root Cause — Top 10</div>
+          <div class="card-sub">Underlying driver of the DSAT</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="l3BarList" class="bar-list"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="grid2">
-    <!-- Resource Delay Buckets -->
-    <div class="panel">
-      <div class="panel-title"><span class="dot" style="--dot-color:#e879f9"></span>Resource Constraint — Delay Buckets</div>
-      <div class="bar-list">
-        <div class="bar-item">
-          <div class="bar-info">
-            <span class="bar-label">⚠ Delayed 12h or more</span>
-            <span class="bar-count" style="color:var(--red)">5 cases (62.5%)</span>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Attribution</div></div>
+      <div class="card-body">
+        <div class="attr-grid">
+          <div class="attr-card">
+            <div class="attr-value" id="attr-support" style="color:var(--red)">—</div>
+            <div class="attr-label">Support-Driven</div>
           </div>
-          <div class="bar-track"><div class="bar-fill" style="width:62.5%;background:#f87171"></div></div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">Ticket left in queue beyond SLA window before assignment</div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info">
-            <span class="bar-label">Delayed 1–4h</span>
-            <span class="bar-count" style="color:var(--yellow)">2 cases (25%)</span>
+          <div class="attr-card">
+            <div class="attr-value" id="attr-product" style="color:var(--accent)">—</div>
+            <div class="attr-label">Product-Driven</div>
           </div>
-          <div class="bar-track"><div class="bar-fill" style="width:25%;background:#fbbf24"></div></div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">Customer became unresponsive after wait; tickets CNR'd</div>
         </div>
-        <div class="bar-item">
-          <div class="bar-info">
-            <span class="bar-label">Delayed 4–8h</span>
-            <span class="bar-count" style="color:var(--muted2)">1 case (12.5%)</span>
-          </div>
-          <div class="bar-track"><div class="bar-fill" style="width:12.5%;background:#9ca3af"></div></div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">Issue self-resolved before investigation could begin</div>
+        <div style="margin-top:14px">
+          <div class="bar-list" id="supportReasonsBar"></div>
         </div>
       </div>
     </div>
-
-    <!-- Product Sub-reasons -->
-    <div class="panel">
-      <div class="panel-title"><span class="dot" style="--dot-color:#60a5fa"></span>Product DSATs — Sub-reasons</div>
-      <div class="bar-list">
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label">Others (unclassified)</span><span class="bar-count" style="color:var(--muted2)">5 (50%)</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:50%;background:#6b7280"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label">Integration issues (HubSpot/Salesforce)</span><span class="bar-count" style="color:var(--accent3)">3 (30%)</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:30%;background:#60a5fa"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label">Feature not available</span><span class="bar-count" style="color:var(--yellow)">1 (10%)</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:10%;background:#fbbf24"></div></div>
-        </div>
-        <div class="bar-item">
-          <div class="bar-info"><span class="bar-label">New UI related issue</span><span class="bar-count" style="color:var(--accent4)">1 (10%)</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:10%;background:#e879f9"></div></div>
-        </div>
-      </div>
-      <div style="font-size:.75rem;color:var(--yellow);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-        ⚠ 5 of 10 product DSATs tagged "Others" — masking actionable signals. Recommend adding sub-tags: Mobile App Bug, Email Delivery, Doc Processing Error.
+    <div class="card">
+      <div class="card-header"><div class="card-title">Account Type Distribution</div></div>
+      <div class="card-body">
+        <div class="chart-wrap-md"><canvas id="chartAccountType"></canvas></div>
       </div>
     </div>
-  </div>
-
-  <!-- Valid DSATs / Support Related -->
-  <div class="panel" style="margin-bottom:22px; border-color:rgba(248,113,113,.35);">
-    <div class="panel-title"><span class="dot" style="--dot-color:#f87171"></span>Support Related DSATs — Sub-reasons (2 Valid Cases)</div>
-
-    <!-- High-level bars matching other sections -->
-    <div class="bar-list" style="margin-bottom:18px">
-      <div class="bar-item">
-        <div class="bar-info">
-          <span class="bar-label">Incomplete Resolution</span>
-          <span class="bar-count" style="color:var(--red)">1 (50%)</span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%;background:#f87171"></div></div>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:2px">Inconsistent information provided — billing credit cost not disclosed upfront</div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Top Product Areas</div></div>
+      <div class="card-body">
+        <div id="productAreaBar" class="bar-list"></div>
       </div>
-      <div class="bar-item">
-        <div class="bar-info">
-          <span class="bar-label">Missing Customer Context</span>
-          <span class="bar-count" style="color:var(--red)">1 (50%)</span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%;background:#f87171"></div></div>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:2px">Customer's message not fully read before responding — context already provided was missed</div>
-      </div>
-    </div>
-
-    <div style="padding-top:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <span class="badge badge-red">2 Valid DSATs</span>
-      <span class="badge badge-orange">9.5% of MTD total</span>
-      <span class="badge badge-yellow">Avg QA: 84% · Below 85% goal</span>
-      <span class="badge badge-gray">Both: S2 Problem Solving failure · Coaching required</span>
     </div>
   </div>
 
 </div>
 
-<!-- ═══ WEEKLY BREAKDOWN ═══ -->
-<div id="page-weekly" class="page">
-  <div class="section-title">Weekly Breakdown — April 2026</div>
-  <div class="section-sub">MTD progress by week · Period April 1–14, 2026</div>
-
-  <div class="week-row">
-    <div class="week-block">
-      <div class="week-lbl">Week 1</div>
-      <div class="week-num">7</div>
-      <div class="week-dates">Apr 1–7</div>
-      <div class="week-breakdown">Product: 4 · Resource: 2 · Support: 0 · Billing: 1</div>
-    </div>
-    <div class="week-block current">
-      <div class="week-lbl">Week 2 ← current</div>
-      <div class="week-num">14</div>
-      <div class="week-dates">Apr 8–14</div>
-      <div class="week-breakdown">Product: 6 · Resource: 6 · Support: 2 · Billing: 0</div>
-    </div>
-    <div class="week-block" style="opacity:.4">
-      <div class="week-lbl">Week 3</div>
-      <div class="week-num">—</div>
-      <div class="week-dates">Apr 15–21</div>
-      <div class="week-breakdown">No data yet</div>
-    </div>
-    <div class="week-block" style="opacity:.4">
-      <div class="week-lbl">Week 4</div>
-      <div class="week-num">—</div>
-      <div class="week-dates">Apr 22–28</div>
-      <div class="week-breakdown">No data yet</div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-title"><span class="dot" style="--dot-color:#fbbf24"></span>Week 1 (Apr 1–7) — 7 DSATs</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Date</th><th>Agent</th><th>L1 Reason</th><th>Conv ID</th><th>QA</th><th>Valid?</th></tr></thead>
-          <tbody>
-            <tr><td>Apr 7</td><td>Yana Martynenko</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473729088708</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 6</td><td>Ana Manuel</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473710710246</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 6</td><td>Cramer Magsalansan</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473636590195</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 6</td><td>Rachele Ong</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473766647072</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 5</td><td>Nicole Nepomuceno</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473707567709</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 3</td><td>JD Dela Llana</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473708300482</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 2</td><td>Elly San Juan</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473684929063</td><td><span class="badge badge-yellow">88%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 1</td><td>Jonathon Gillis</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473636979917</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="margin-top:12px;font-size:.78rem;color:var(--muted2)">Week 1 summary: <strong style="color:var(--accent)">All for removal.</strong> No valid DSATs. Avg QA: 98.5%.</div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title"><span class="dot"></span>Week 2 (Apr 8–14) — 14 DSATs</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Date</th><th>Agent</th><th>L1 Reason</th><th>Conv ID</th><th>QA</th><th>Valid?</th></tr></thead>
-          <tbody>
-            <tr><td>Apr 10</td><td>Cramer Magsalansan</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473654706663</td><td><span class="badge badge-yellow">88%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 10</td><td>Mariia Savych</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473629941243</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 10</td><td>Grace Ann Bacolod</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473751812461</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 10</td><td>Mariia Savych</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473839496004</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 10</td><td>Mariia Savych</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473801456466</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 9</td><td>Cedrick Angeles</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473795858646</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 9</td><td>Mariia Savych</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473787945838</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 8</td><td>AJ Tambalo</td><td><span class="l1-tag l1-support">Support</span></td><td class="mono">215473825305502</td><td><span class="badge badge-red">84%</span></td><td><span class="badge badge-red">YES ⚠</span></td></tr>
-            <tr><td>Apr 8</td><td>Ella Bumatay</td><td><span class="l1-tag l1-support">Support</span></td><td class="mono">215473733059063</td><td><span class="badge badge-red">84%</span></td><td><span class="badge badge-red">YES ⚠</span></td></tr>
-            <tr><td>Apr 8</td><td>Vi Atilano</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473733511582</td><td><span class="badge badge-yellow">88%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 8</td><td>Mark Reyes</td><td><span class="l1-tag l1-product">Product</span></td><td class="mono">215473765874350</td><td><span class="badge badge-green">100%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 8</td><td>Jack Allan</td><td><span class="l1-tag l1-billing">Billing</span></td><td class="mono">215473718355275</td><td><span class="badge badge-red">84%</span></td><td><span class="badge badge-green">No</span></td></tr>
-            <tr><td>Apr 8</td><td>Ana Manuel</td><td><span class="l1-tag l1-resource">Resource</span></td><td class="mono">215473636662968</td><td><span class="badge badge-yellow">88%</span></td><td><span class="badge badge-green">No</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="margin-top:12px;font-size:.78rem;color:var(--muted2)">Week 2: <strong style="color:var(--red)">2 valid DSATs</strong> (AJ Tambalo, Ella Bumatay — both S2 failures). Avg QA: 94.0%.</div>
-    </div>
-  </div>
+<!-- ═══════════════ WEEKLY BREAKDOWN TAB ═══════════════ -->
+<div class="page" id="page-weekly">
+  <div class="week-pills" id="weekPills"></div>
+  <div id="weeklyContent"></div>
 </div>
 
-<!-- ═══ DSAT LOG ═══ -->
-<div id="page-log" class="page">
-  <div class="section-title">Itemized DSAT Log</div>
-  <div class="section-sub">All 21 conversations reviewed · April 1–14, 2026</div>
-
-  <div class="panel">
-    <div class="flex-between" style="margin-bottom:14px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <select id="filter-l1" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;">
-          <option value="">All L1 Reasons</option>
-          <option>Product Related</option>
-          <option>Resource Constraints</option>
-          <option>Support Related</option>
-          <option>Billing Related</option>
-        </select>
-        <select id="filter-valid" style="font-size:.78rem;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;">
-          <option value="">All</option>
-          <option value="Yes">Valid DSATs only</option>
-          <option value="No">For Removal only</option>
-        </select>
+<!-- ═══════════════ DSAT LOG TAB ═══════════════ -->
+<div class="page" id="page-log">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">DSAT Conversation Log</div>
+        <div class="card-sub" id="logCount">Showing all records</div>
       </div>
-      <span id="filter-count" style="font-size:.78rem;color:var(--muted2)">Showing 21 of 21</span>
+      <input type="text" class="filter-input" id="logSearch" placeholder="🔍  Search by ID, agent, summary…" style="min-width:240px">
     </div>
-    <div class="tbl-wrap">
-      <table id="log-table">
+    <div class="table-wrap">
+      <table id="logTable">
         <thead>
           <tr>
-            <th>#</th><th>Date</th><th>Conv ID</th><th>Agent</th>
-            <th>L1 Reason</th><th>Sub-reason</th><th>Product Area</th>
-            <th>Acct Type</th><th>Rating</th><th>QA</th><th>Goal?</th>
-            <th>S1</th><th>S2</th><th>S3</th><th>Rec</th><th>Valid?</th>
+            <th data-col="id">Conv ID <span class="sort-icon">↕</span></th>
+            <th data-col="date">Date <span class="sort-icon">↕</span></th>
+            <th data-col="agent">Agent <span class="sort-icon">↕</span></th>
+            <th data-col="l1">L1 Reason <span class="sort-icon">↕</span></th>
+            <th data-col="l2">L2 Issue Type <span class="sort-icon">↕</span></th>
+            <th data-col="l3">L3 Root Cause <span class="sort-icon">↕</span></th>
+            <th data-col="rec">Verdict <span class="sort-icon">↕</span></th>
+            <th data-col="rating">Rating <span class="sort-icon">↕</span></th>
+            <th data-col="account">Account <span class="sort-icon">↕</span></th>
+            <th>Summary</th>
           </tr>
         </thead>
-        <tbody id="log-tbody"></tbody>
+        <tbody id="logBody"></tbody>
       </table>
+    </div>
+    <div class="pagination">
+      <span class="pagination-info" id="pageInfo"></span>
+      <div class="pagination-btns" id="pageBtns"></div>
     </div>
   </div>
 </div>
 
-<!-- ═══ COACHING ═══ -->
-<div id="page-coaching" class="page">
-  <div class="section-title">Agent Coaching Snapshot</div>
-  <div class="section-sub">Individual QA scores, AFIs, and recommendations · April 2026</div>
-
-  <div class="notice">📌 <strong>2 valid DSATs require immediate coaching:</strong> AJ Tambalo and Ella Bumatay. Both scored 84% — below the 85% goal. Both are S2 Problem Solving failures. Schedule individual coaching sessions.</div>
-
-  <div id="coaching-cards"></div>
+<!-- ═══════════════ COACHING TAB ═══════════════ -->
+<div class="page" id="page-coaching">
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Agent DSAT Summary</div>
+          <div class="card-sub">DSAT count, valid vs removal, and QA score</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Agent</th>
+              <th>Total DSATs</th>
+              <th>Valid</th>
+              <th>For Removal</th>
+              <th>QA Score</th>
+              <th>Distribution</th>
+            </tr>
+          </thead>
+          <tbody id="agentTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Valid DSAT Reasons</div></div>
+        <div class="card-body">
+          <div class="section-label">Support-Driven</div>
+          <div id="supportReasonsCoach" class="bar-list" style="margin-bottom:16px"></div>
+          <div class="section-label">Product-Driven</div>
+          <div id="productReasonsCoach" class="bar-list"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Valid DSATs Only</div></div>
+        <div class="card-body">
+          <div id="validDsatList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ INSIGHTS ═══ -->
-<div id="page-insights" class="page">
-  <div class="section-title">Key Insights & Recommendations</div>
-  <div class="section-sub">Leadership summary · April 2026 · For QA Lead + Leadership</div>
-  <div id="insights-content"></div>
+<!-- ═══════════════ INSIGHTS TAB ═══════════════ -->
+<div class="page" id="page-insights">
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🏆 Top DSAT Reasons — April 2026</div>
+          <div class="card-sub">L1 + L2 combined ranking for the month</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="insightMonthTop"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📈 Q2 2026 — Quarterly Overview</div>
+          <div class="card-sub">Apr 2026 · (May & Jun data pending)</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="insightQuarterTop"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">📊 L1 Distribution by Week</div></div>
+      <div class="card-body">
+        <div class="chart-wrap-tall"><canvas id="chartStackedWeekly"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎯 Root Cause Heatmap</div></div>
+      <div class="card-body">
+        <div id="rootCauseHeatmap"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title">📝 Key Observations & Recommended Actions</div></div>
+    <div class="card-body">
+      <div id="insightCallouts"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-// ── DATA ─────────────────────────────────────────────────────
-const LOG_DATA = [
-  {n:1,date:'2026-04-10',convid:'215473654706663',agent:'Cramer Magsalansan',l1:'Product Related',sub:'Feature not available',area:'Others',acct:'Not Identified',rating:2,qa:88,goal:'YES',s1:'Needs Improvement',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Customer requested to move sent doc between workspaces without resending. Feature not available. Multiple follow-ups needed.'},
-  {n:2,date:'2026-04-10',convid:'215473629941243',agent:'Mariia Savych',l1:'Product Related',sub:'Integration issues',area:'Integrations: HubSpot',acct:'Business',rating:2,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'HubSpot contacts stopped auto-adding as recipients. Product confirmed bug; no resolution timeline. Customer frustrated by workflow disruption.'},
-  {n:3,date:'2026-04-10',convid:'215473751812461',agent:'Grace Ann Bacolod',l1:'Product Related',sub:'Others',area:'Sending Documents',acct:'Starter',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"'Something went wrong' error on mobile app sending docs. Web version worked. Customer unresponsive; ticket CNR'd."},
-  {n:4,date:'2026-04-10',convid:'215473839496004',agent:'Mariia Savych',l1:'Resource Constraints',sub:'Delayed 1-4h',area:'Integrations: Salesforce',acct:'Not Identified',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"Customer asked NOT to create ticket; system routed it anyway. Premature routing led to case closure without solution."},
-  {n:5,date:'2026-04-10',convid:'215473801456466',agent:'Mariia Savych',l1:'Resource Constraints',sub:'Delayed 1-4h',area:'Others',acct:'Business',rating:2,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"SSO email setup unclear; customer unresponsive. Ticket CNR'd."},
-  {n:6,date:'2026-04-09',convid:'215473795858646',agent:'Cedrick Angeles',l1:'Product Related',sub:'Others',area:'Others',acct:'Business',rating:3,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Missing email notifications due to signing order logic. Agent correctly diagnosed. Customer accepted explanation.'},
-  {n:7,date:'2026-04-09',convid:'215473787945838',agent:'Mariia Savych',l1:'Product Related',sub:'Others',area:'Billing',acct:'Business',rating:2,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Payment settings moved to Workflow Builder (New UI). Agent correctly identified and guided. Slow response perception drove DSAT.'},
-  {n:8,date:'2026-04-08',convid:'215473825305502',agent:'AJ Tambalo',l1:'Support Related',sub:'Lacked Care & Attention',area:'Billing / Subscription Mgmt',acct:'Business',rating:3,qa:84,goal:'NO',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',rec:'DSAT is valid',valid:'Yes',summary:"Inconsistent explanation of Forms usage credits — initially 'no limit', then $2/credit. Confusion led to valid DSAT. AFI: disclose per-credit cost upfront."},
-  {n:9,date:'2026-04-08',convid:'215473733059063',agent:'Ella Bumatay',l1:'Support Related',sub:'Lacked Care & Attention',area:'Others',acct:'Business',rating:1,qa:84,goal:'NO',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',rec:'DSAT is valid',valid:'Yes',summary:'Customer stated Forms removal concern clearly; agent asked for clarification on what change they meant. Context already provided. AFI: read full message before responding.'},
-  {n:10,date:'2026-04-08',convid:'215473733511582',agent:'Vi Atilano',l1:'Resource Constraints',sub:'Delayed 12h+',area:'Others',acct:'Enterprise',rating:1,qa:88,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Needs Improvement',rec:'For Removal',valid:'No',summary:"Pricing table bug. Ticket left on Pending; triggered auto-CNR survey while agent was still investigating. AFI: use On Hold or In Progress when actively working a case."},
-  {n:11,date:'2026-04-08',convid:'215473765874350',agent:'Mark Reyes',l1:'Product Related',sub:'Others',area:'Upload / Download Files',acct:'Business',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"Word doc (11-page) uploaded as 3-page PDF — known system limitation. Agent explained correctly. Customer unresponsive; CNR'd."},
-  {n:12,date:'2026-04-08',convid:'215473718355275',agent:'Jack Allan',l1:'Billing Related',sub:'Others',area:'Billing / Subscription Mgmt',acct:'Business',rating:2,qa:84,goal:'NO',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Expired account causing template access issues. HubSpot integration concern not addressed. AFI: address all concerns in same response.'},
-  {n:13,date:'2026-04-07',convid:'215473729088708',agent:'Yana Martynenko',l1:'Product Related',sub:'Integration issues',area:'Integrations: Salesforce',acct:'Enterprise',rating:2,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Salesforce sync failure — dropdown field mismatch. Resolved via live session. Exemplary technical ownership and documentation.'},
-  {n:14,date:'2026-04-07',convid:'215473636662968',agent:'Ana Manuel',l1:'Resource Constraints',sub:'Delayed 12h+',area:'Document and Data Mgmt',acct:'Business',rating:1,qa:88,goal:'YES',s1:'Needs Improvement',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Persistent pricing table banner. 3-day delay in first response; no apology for delay. AFI: acknowledge delayed response explicitly.'},
-  {n:15,date:'2026-04-06',convid:'215473710710246',agent:'Ana Manuel',l1:'Resource Constraints',sub:'Delayed 12h+',area:'Document and Data Mgmt',acct:'Starter',rating:3,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Signer link expired (60-day limit, Starter plan). Agent correctly explained and provided workaround. Delay before response likely drove DSAT.'},
-  {n:16,date:'2026-04-06',convid:'215473636590195',agent:'Cramer Magsalansan',l1:'Resource Constraints',sub:'Delayed 12h+',area:'Billing / Subscription Mgmt',acct:'Starter',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"Customer asked for discount; none available. Agent empathetically delivered 'no' and guided to downgrade options. Delay before response was DSAT driver."},
-  {n:17,date:'2026-04-06',convid:'215473766647072',agent:'Rachele Ong',l1:'Resource Constraints',sub:'Delayed 4-8h',area:'Others',acct:'Enterprise',rating:3,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'Drag-to-move bug resolved on its own before agent could investigate. Urgency unmet due to 4-8h delay.'},
-  {n:18,date:'2026-04-05',convid:'215473707567709',agent:'Nicole Nepomuceno',l1:'Product Related',sub:'Others',area:'Emails',acct:'Enterprise',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"Email delivery failures affecting whole company. Suppression list issue fixed. Broader client-side delivery not fully resolved. CNR'd."},
-  {n:19,date:'2026-04-03',convid:'215473708300482',agent:'JD Dela Llana',l1:'Product Related',sub:'Integration issues',area:'Integrations: HubSpot',acct:'Enterprise',rating:3,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:"HubSpot integration issue. Agent asked for details and suggested reconnect. Customer unresponsive; CNR'd."},
-  {n:20,date:'2026-04-02',convid:'215473684929063',agent:'Elly San Juan',l1:'Resource Constraints',sub:'Delayed 12h+',area:'Others',acct:'Enterprise',rating:3,qa:88,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Needs Improvement',rec:'For Removal',valid:'No',summary:'Workspace deletion resolved. Wrong product area tag used (Account Deletion vs. Settings/Workspaces & User Roles). AFI: verify product area tag.'},
-  {n:21,date:'2026-04-01',convid:'215473636979917',agent:'Jonathon Gillis',l1:'Product Related',sub:'New UI related issue',area:'Others',acct:'Business',rating:1,qa:100,goal:'YES',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',rec:'For Removal',valid:'No',summary:'New editor layout disrupted customer mid-project. Agent correctly explained UI change and provided navigation guidance.'},
-];
+const RAW_DATA = {"total": 64, "valid": 8, "removal": 56, "l1_counts": {"Product Related": 21, "Billing Related": 16, "Resource Constraint": 14, "Support Related": 8, "Process Related": 4, "Customer Related": 1}, "l2_counts": {"Troubleshooting (Break/Fix)": 29, "Billing - General": 10, "How To's (Feature and Sytem How To)": 7, "Billing - Explanation": 5, "Incident/Bug": 4, "Subscription Inquiry": 3, "Discount Request": 2, "Others": 2, "Account Update request": 2}, "l3_counts": {"TS Requires more information from Cx": 12, "Feature not working as expected": 8, "Current Plan Limitation": 8, "Product Feature Confusion": 6, "Customer - Billing Confusion": 6, "Incomplete Information/Resolution Provided": 6, "Premature Case Closure": 4, "Product - Feature not available": 3, "Cx requested live help": 2, "Billing - Declined Refund Request": 2}, "weekly_total": {"2026-03-30": 4, "2026-04-06": 18, "2026-04-13": 14, "2026-04-20": 20, "2026-04-27": 8}, "weekly_valid": {"2026-04-06": 3, "2026-04-13": 2, "2026-04-20": 2, "2026-04-27": 1}, "weekly_l1": {"2026-03-30": {"Product Related": 2, "Customer Related": 1, "Resource Constraint": 1}, "2026-04-06": {"Product Related": 7, "Resource Constraint": 7, "Support Related": 3, "Billing Related": 1}, "2026-04-13": {"Billing Related": 5, "Product Related": 3, "Resource Constraint": 2, "Support Related": 2, "Process Related": 2}, "2026-04-20": {"Billing Related": 9, "Resource Constraint": 4, "Product Related": 3, "Process Related": 2, "Support Related": 2}, "2026-04-27": {"Product Related": 6, "Support Related": 1, "Billing Related": 1}}, "agent_data": [{"agent": "Jack Allan", "total": 6, "valid": 0, "removal": 6, "qa_score": 83.3}, {"agent": "Jonathon Gillis", "total": 5, "valid": 0, "removal": 5, "qa_score": 95.2}, {"agent": "Mariia Savych", "total": 5, "valid": 0, "removal": 5, "qa_score": 100.0}, {"agent": "Cramer Magsalansan", "total": 4, "valid": 0, "removal": 4, "qa_score": 97.0}, {"agent": "Adrienne Madrigal", "total": 4, "valid": 2, "removal": 2, "qa_score": 75.5}, {"agent": "Al Reenan Lodonia", "total": 3, "valid": 0, "removal": 3, "qa_score": 90.7}, {"agent": "Cedrick Angeles", "total": 3, "valid": 1, "removal": 2, "qa_score": 86.0}, {"agent": "Savannah Faulkner", "total": 3, "valid": 0, "removal": 3, "qa_score": 96.0}, {"agent": "Vi Atilano", "total": 3, "valid": 0, "removal": 3, "qa_score": 96.0}, {"agent": "Jay Masternak", "total": 3, "valid": 1, "removal": 2, "qa_score": 64.0}, {"agent": "Elly San Juan", "total": 3, "valid": 0, "removal": 3, "qa_score": 92.0}, {"agent": "Johnabell Tampos", "total": 3, "valid": 0, "removal": 3, "qa_score": 90.7}, {"agent": "Autumn Seiberg", "total": 2, "valid": 1, "removal": 1, "qa_score": 94.0}, {"agent": "Ana Manuel", "total": 2, "valid": 0, "removal": 2, "qa_score": 94.0}, {"agent": "Alvin Tambalo", "total": 2, "valid": 2, "removal": 0, "qa_score": 78.0}], "pa_counts": {"Others": 13, "Billing/ Subscription Management": 12, "Billing": 10, "Document and Data Management": 7, "Integrations:Hubspot": 6, "Templates": 3, "Integrations": 2, "Upload/Download Files": 2, "Integrations:Salesforce": 2, "Workflow": 1}, "acc_counts": {"Business": 28, "Enterprise": 17, "Starter": 14, "Free E-Sign": 2, "Not Identified": 2, "Essentials": 1}, "supp_reasons": {"Lacked Care & Attention": 5, "Premature Case Closure": 3}, "prod_reasons": {"Others": 8, "Integration issues": 8, "Feature not available": 3, "New UI Related issue": 1}, "log_rows": [{"id": "215474099625506", "date": "2026-04-28", "week": "Apr 27\u2013May 03", "agent": "Johnabell Tampos", "l1": "Product Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Cx requested live help", "rec": "For Removal", "rating": 1, "remark": "I couldnt get her to meet inmediatly with me to solve the issue I decided to use another app to sign the doc. Tomorrow I will explore the last thing she mentioned with calm. I was in a rush, sorry, this is nt the attention I expected", "account": "Enterprise", "product_area": "Workflow", "support_dsat": "", "product_dsat": "Others", "summary": "The customer needed quick, hands-on help but the interaction became prolonged, with repeated requests for screenshots while the customer preferred a live meeting. Since live calls aren\u2019t supported, this mismatch in approach led to a slower resolution and a somewhat frustrating experience before the ", "qa": 84.0, "week_start": "2026-04-27"}, {"id": "215474026689693", "date": "2026-04-28", "week": "Apr 27\u2013May 03", "agent": "Autumn Seiberg", "l1": "Product Related", "l2": "Incident/Bug", "l3": "Product - Feature not available", "rec": "For Removal", "rating": 3, "remark": "I shouldn't be surprised a beta feature isn't fully featured", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "Feature not available", "summary": "The customer experienced delays and uncertainty while trying to prepopulate Smart Form fields using third-party data. After multiple troubleshooting attempts and references to outdated documentation, support confirmed that the requested functionality is not currently supported in Smart Forms, which ", "qa": 100.0, "week_start": "2026-04-27"}, {"id": "215474041451309", "date": "2026-04-28", "week": "Apr 27\u2013May 03", "agent": "Cedrick Angeles", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 2, "remark": "How can I continue with this conversation? We have other users with same profile and are receiving Slack notifications.", "account": "Enterprise", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "Integration issues", "summary": "The customer reported that a user was not receiving Slack notifications, which was traced to role-based permission differences in the PandaDoc\u2013Slack integration. The issue remained partially unresolved due to configuration factors and no direct fix being applied beyond recommendations. The DSAT was ", "qa": 88.0, "week_start": "2026-04-27"}, {"id": "215473991220551", "date": "2026-04-28", "week": "Apr 27\u2013May 03", "agent": "Savannah Faulkner", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 1, "remark": "The issue is not resolved, i already explained that its not about the cookies or whatsoever, but about the integration and that is works not correctly in all workspaces.", "account": "Enterprise", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "Integration issues", "summary": "The customer reported that the HubSpot integration only worked in one workspace but failed in others. Support suggested reconnecting the integration and later provided troubleshooting steps, including browser checks and requesting examples for further investigation. The issue remained unresolved acr", "qa": 88.0, "week_start": "2026-04-27"}, {"id": "215474082563528", "date": "2026-04-27", "week": "Apr 27\u2013May 03", "agent": "Adrienne Madrigal", "l1": "Support Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Premature Case Closure", "rec": "DSAT is valid", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "Premature Case Closure", "product_dsat": "", "summary": "The customer was frustrated due to slow responses, billing confusion, and unclear guidance at the start. The DSAT was also triggered when Jack accidentally closed the ticket prematurely. The customer had to follow up multiple times before getting a clear answer.   ================ Reassigning Dsat t", "qa": 54.0, "week_start": "2026-04-27"}, {"id": "215474017923530", "date": "2026-04-27", "week": "Apr 27\u2013May 03", "agent": "Jonathon Gillis", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer reported an issue switching between workspaces despite being the account owner. Support responded promptly, showed empathy, and provided relevant troubleshooting steps along with a helpful guide. We also asked for additional details and screenshots to further investigate, ensuring prope", "qa": 100.0, "week_start": "2026-04-27"}, {"id": "215474015278064", "date": "2026-04-27", "week": "Apr 27\u2013May 03", "agent": "Al Reenan Lodonia", "l1": "Product Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Product - Feature not available", "rec": "For Removal", "rating": 3, "remark": "", "account": "Starter", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "Feature not available", "summary": "The customer was dissatisfied because their concern about preventing signature copying in the Signature Certificate was not resolved. Support clearly explained current limitations and sent a feature request, but the answer confirmed the functionality does not exist. The customer\u2019s request for strong", "qa": 100.0, "week_start": "2026-04-27"}, {"id": "215473718355275", "date": "2026-04-27", "week": "Apr 27\u2013May 03", "agent": "Jack Allan", "l1": "Billing Related", "l2": "Billing - Explanation", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer was dissatisfied due to account and subscription confusion, as they were unable to access templates and saw an expired subscription message despite believing their plan was active. Support explained that ownership transfer and seat removal were required before changes, and later clarifi", "qa": 84.0, "week_start": "2026-04-27"}, {"id": "215473990956428", "date": "2026-04-26", "week": "Apr 20\u2013Apr 26", "agent": "Anastasiya Zhuk", "l1": "Process Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 1, "remark": "its so sad that you end the tickets so fast. everytime i need to make a new one, its driving me crazy", "account": "Starter", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer experienced frustration due to delays, repeated follow-ups, and lack of clear guidance on account consolidation and merging. However, support did provide clarification on plan differences and next steps for merging, and the ticket was eventually reopened to ensure continued assistance a", "qa": 84.0, "week_start": "2026-04-20"}, {"id": "215474053598237", "date": "2026-04-24", "week": "Apr 20\u2013Apr 26", "agent": "Al Reenan Lodonia", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Incomplete Information/Resolution Provided", "rec": "For Removal", "rating": 2, "remark": "", "account": "Enterprise", "product_area": "Integrations", "support_dsat": "", "product_dsat": "Integration issues", "summary": "Customer was dissatisfied due to incorrect initial guidance and extra back-and-forth before being directed to the correct Rules location in PandaDoc with HubSpot.", "qa": 72.0, "week_start": "2026-04-20"}, {"id": "215473978621068", "date": "2026-04-23", "week": "Apr 20\u2013Apr 26", "agent": "Patricia Nicole Nepomuceno", "l1": "Billing Related", "l2": "Discount Request", "l3": "Product - Feature not available", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "Customer was dissatisfied because they expected an Education Plan option, but were later informed that only standard plans are available and no dedicated education offering exists.", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473977672261", "date": "2026-04-23", "week": "Apr 20\u2013Apr 26", "agent": "Mariia Savych", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "Integration issues", "summary": "Customer was dissatisfied because pre-assigned template signers did not auto-populate when creating documents via HubSpot, and this limitation in PandaDoc was only clarified after escalation to support.", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473984669416", "date": "2026-04-23", "week": "Apr 20\u2013Apr 26", "agent": "Jay Masternak", "l1": "Billing Related", "l2": "Billing - General", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "Customer was dissatisfied because they expected guided assistance to sign up for the API Developer Plan, but were only provided a self-service link with limited support.", "qa": 60.0, "week_start": "2026-04-20"}, {"id": "215474009816133", "date": "2026-04-22", "week": "Apr 20\u2013Apr 26", "agent": "Jack Allan", "l1": "Process Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 1, "remark": "Complete trash.", "account": "Business", "product_area": "Compliance", "support_dsat": "", "product_dsat": "", "summary": "The customer reached out requesting a full data export under GDPR and initially ran into confusion due to plan limitations and automatic request denials. Once connected with Support, the team quickly stepped in, processed the request, and successfully provided all documents and templates.  However, ", "qa": 72.0, "week_start": "2026-04-20"}, {"id": "215473958652850", "date": "2026-04-22", "week": "Apr 20\u2013Apr 26", "agent": "Grace Ann Bacolod", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "I spent an hour figuring it out myself because it took two days to get an email response.   Could have been fixed in 5 minutes with a phone call.  I\u2019m considering changing companies due to no phone support.", "account": "Starter", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "", "summary": "Customer couldn\u2019t send contracts due to a role assignment error, even though roles were already set. He asked for phone support, but was informed support is only available via chat/email.  Grace explained that the issue usually happens when roles don\u2019t have assigned recipients and gave steps to fix ", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473929052095", "date": "2026-04-22", "week": "Apr 20\u2013Apr 26", "agent": "Jack Allan", "l1": "Billing Related", "l2": "Billing - General", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 2, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer needed a way for a parent and camper (without email) to sign waivers. Support explained system limitations and suggested workarounds like using phone numbers or adjusting the template.  The customer became frustrated due to confusion around setup and unexpected costs from usage credits ", "qa": 72.0, "week_start": "2026-04-20"}, {"id": "215474018127485", "date": "2026-04-22", "week": "Apr 20\u2013Apr 26", "agent": "Savannah Faulkner", "l1": "Product Related", "l2": "Incident/Bug", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 1, "remark": "My issue is still unresolved", "account": "Business", "product_area": "Integrations", "support_dsat": "", "product_dsat": "Integration issues", "summary": "Customer was dissatisfied due to a long and confusing troubleshooting process with multiple escalations before the PandaDoc\u2013Pipedrive integration issue was finally resolved.", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473925944159", "date": "2026-04-21", "week": "Apr 20\u2013Apr 26", "agent": "Autumn Seiberg", "l1": "Support Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Premature Case Closure", "rec": "DSAT is valid", "rating": 3, "remark": "I need to re-open this she specifically say she was still working on this. I have edited the title once it reverts but when I sent it the email showed the original title still. I had to actually go re-send the entire thing to a client and updated it later (embarrassing!) once but not sure if that is still happening on what you see in the email subject line name. Seems to be working today?", "account": "Business", "product_area": "Document and Data Management", "support_dsat": "Lacked Care & Attention", "product_dsat": "", "summary": "Customer reported a bug where duplicated and renamed documents sometimes showed the original title on the send page, affecting what clients see. Support reproduced the issue, shared a temporary workaround, and confirmed it would be escalated for further investigation.  After the update, the ticket w", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473918880452", "date": "2026-04-21", "week": "Apr 20\u2013Apr 26", "agent": "Adrienne Madrigal", "l1": "Support Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Incomplete Information/Resolution Provided", "rec": "DSAT is valid", "rating": 3, "remark": "", "account": "Starter", "product_area": "Templates", "support_dsat": "Lacked Care & Attention", "product_dsat": "", "summary": "Customer reached the 5-template limit on the Starter plan and reported a bug that prevented deleting templates. Support first suggested troubleshooting steps, but the issue persisted. The team then tried to help by deleting templates manually, but two important templates were removed by mistake, whi", "qa": 72.0, "week_start": "2026-04-20"}, {"id": "215473917908958", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Elly San Juan", "l1": "Billing Related", "l2": "Billing - Explanation", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 2, "remark": "", "account": "Starter", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer was confused by the \u201c0 of 5 free templates remaining\u201d message despite only seeing one template in their account. Support clarified that a default template counts toward the limit and deleted the templates from the system to resolve the issue. The customer did not respond after this acti", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473921867449", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Adrienne Madrigal", "l1": "Resource Constraint", "l2": "Others", "l3": ">=1H Delayed 1st Response", "rec": "For Removal", "rating": 1, "remark": "", "account": "Starter", "product_area": "No Product Area", "support_dsat": "", "product_dsat": "", "summary": "The customer requested urgent emergency support, but experienced delays in getting timely human assistance and acknowledgment of urgency, which led to dissatisfaction.", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473921502268", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Jack Allan", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "", "account": "Starter", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "", "summary": "The customer requested an urgent increase in the number of signatories per document, but did not respond to the support agent\u2019s follow-up questions needed so we can continue assisting. After multiple reminders and no further engagement, the ticket was closed due to the customer being unresponsive un", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473992440633", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Cramer Magsalansan", "l1": "Billing Related", "l2": "Subscription Inquiry", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 2, "remark": "It takes way too long to get a response from support. My issue started at 10am and it didn't get resolved until 3pm", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer needed urgent help upgrading their plan and enabling Bulk Send. While support eventually coordinated with Billing and completed the upgrade with prorated pricing and correct configuration, the customer experienced delays, repeated back-and-forth, and frustration due to unclear plan limi", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473913803149", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Jonathon Gillis", "l1": "Resource Constraint", "l2": "How To's (Feature and Sytem How To)", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 1, "remark": "You didn't resolve my issue.  Poor customer service.  I would like to speak to a live person.", "account": "Starter", "product_area": "Templates", "support_dsat": "", "product_dsat": "", "summary": "The customer was unable to create new templates on a new account and was confused about template limits across multiple accounts. Support provided clarification on the 5-template limit and investigated account data, but the issue remained unresolved due to confusion around separate accounts. The tic", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473833507591", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Vi Atilano", "l1": "Billing Related", "l2": "Billing - General", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer experienced ongoing issues updating and processing their payment method, with no error messages and repeated failed attempts despite troubleshooting in PandaDoc. Additional information was requested via email to continue the investigation, but the customer did not respond, and the ticke", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473922725731", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Johnabell Tampos", "l1": "Billing Related", "l2": "Billing - Explanation", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer was frustrated after losing access to pricing tables due to a plan change and felt forced to upgrade, which led to dissatisfaction despite support clearly explaining the situation and available options.", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473922414036", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Adrienne Madrigal", "l1": "Billing Related", "l2": "Billing - General", "l3": "Billing - Declined Refund Request", "rec": "For Removal", "rating": 1, "remark": "", "account": "Starter", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer experienced repeated payment declines despite having sufficient funds, which led to frustration and concern about potential account closure. Support provided troubleshooting steps and identified possible bank-side issues, but the situation caused confusion until it was later clarified t", "qa": 88.0, "week_start": "2026-04-20"}, {"id": "215473848986353", "date": "2026-04-20", "week": "Apr 20\u2013Apr 26", "agent": "Johnabell Tampos", "l1": "Billing Related", "l2": "Billing - General", "l3": "Billing - Declined Refund Request", "rec": "For Removal", "rating": 2, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer faced repeated payment declines across multiple valid cards and raised concerns that the issue was with the system. Support responded by explaining security and fraud filters, confirming there were no system-wide issues, and guiding the customer through troubleshooting steps, including ", "qa": 100.0, "week_start": "2026-04-20"}, {"id": "215473892186703", "date": "2026-04-17", "week": "Apr 13\u2013Apr 19", "agent": "Mark Reyes", "l1": "Resource Constraint", "l2": "Others", "l3": ">=12H Before Ticket was assigned", "rec": "For Removal", "rating": 1, "remark": "I have not received any response yet", "account": "Free E-Sign", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer asked about pricing, recipient limits, and trial options. Support provided accurate and complete information. Customer was unresponsive so the ticket was closed due to our CNR process. It looks like the customer did not receive our response base from the feedback", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473884948460", "date": "2026-04-17", "week": "Apr 13\u2013Apr 19", "agent": "Jay Masternak", "l1": "Billing Related", "l2": "Billing - General", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer was unhappy due to confusion about credit usage and a discount code that didn\u2019t apply to credits, even though support clarified it was only valid for Zapier and escalated the request to billing for review and purchase assistance.", "qa": 84.0, "week_start": "2026-04-13"}, {"id": "215473858906783", "date": "2026-04-17", "week": "Apr 13\u2013Apr 19", "agent": "Ella Bumatay", "l1": "Billing Related", "l2": "Billing - Explanation", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 1, "remark": "", "account": "Essentials", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer was unhappy due to the removal of the Essentials plan and the upcoming 5-template limit on the Starter plan, which they felt would negatively impact their business and ability to use PandaDoc in regulated industries.  Support correctly explained the plan changes and upgrade options, but", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473714756169", "date": "2026-04-15", "week": "Apr 13\u2013Apr 19", "agent": "Cedrick Angeles", "l1": "Support Related", "l2": "Subscription Inquiry", "l3": "Premature Case Closure", "rec": "DSAT is valid", "rating": 1, "remark": "This issue was not resolved.", "account": "Free E-Sign", "product_area": "Notary", "support_dsat": "Premature Case Closure", "product_dsat": "", "summary": "The customer experienced ongoing disruption due to changes in notary functionality, specifically reduced recipient limits that impacted their workflow. While support eventually provided partial fixes and clarification, the resolution was delayed, inconsistent, and lacked clear communication around c", "qa": 70.0, "week_start": "2026-04-13"}, {"id": "215473833507591", "date": "2026-04-15", "week": "Apr 13\u2013Apr 19", "agent": "Vi Atilano", "l1": "Billing Related", "l2": "Billing - General", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer experienced ongoing issues updating and processing their payment method, with no error messages and repeated failed attempts despite troubleshooting in PandaDoc. Additional information was requested via email to continue the investigation, but the customer did not respond, and the ticke", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473824255036", "date": "2026-04-15", "week": "Apr 13\u2013Apr 19", "agent": "Cramer Magsalansan", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 3, "remark": "https://www.loom.com/share/e26c99782874457480e0cf76a777ba42", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer reported an issue where tasks in a PandaDoc \u201cRoom\u201d were disappearing or behaving inconsistently after being filled out. Support acknowledged the issue and requested additional details, including a screen recording, to help replicate the behavior. The agent also sent a workspace access r", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473840939567", "date": "2026-04-15", "week": "Apr 13\u2013Apr 19", "agent": "Jonathon Gillis", "l1": "Product Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Cx requested live help", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Payment Gateways", "support_dsat": "", "product_dsat": "Others", "summary": "The customer contacted support asking for a phone call to check if PandaDoc can support their payment block use case. Support explained that phone support is not available and provided written troubleshooting steps and asked for additional details.  The agent later requested screenshots and setup in", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473919651930", "date": "2026-04-15", "week": "Apr 13\u2013Apr 19", "agent": "Jd Dela Llana", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "FIN AI Responses Confusion", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "Integration issues", "summary": "The customer experienced confusion due to unclear guidance from the AI regarding workspace setup, which led to frustration and a request for a human agent. However, before the agent could fully investigate, the customer was able to resolve the issue on their own and requested to close the conversati", "qa": 84.0, "week_start": "2026-04-13"}, {"id": "215473843410877", "date": "2026-04-14", "week": "Apr 13\u2013Apr 19", "agent": "Jack Allan", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "Others", "summary": "The customer reported missing documents after setting up a new laptop. Initial troubleshooting steps were provided to help identify possible causes. There was an opportunity to further improve the experience through more proactive investigation and faster follow-ups. Strengthening ownership and offe", "qa": 88.0, "week_start": "2026-04-13"}, {"id": "215473847944449", "date": "2026-04-14", "week": "Apr 13\u2013Apr 19", "agent": "Jonathon Gillis", "l1": "Process Related", "l2": "Account Update request", "l3": "Product - Bug", "rec": "For Removal", "rating": 1, "remark": "Hello.  I am seeking follow up on my ticket  Re: #90756610", "account": "Business", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer requested account deletion, which was processed, but the confirmation email bounced back, preventing the customer from receiving confirmation and leading them to open another ticket to verify completion.", "qa": 88.0, "week_start": "2026-04-13"}, {"id": "215473824066438", "date": "2026-04-14", "week": "Apr 13\u2013Apr 19", "agent": "Alvin Tambalo", "l1": "Support Related", "l2": "How To's (Feature and Sytem How To)", "l3": "Incomplete Information/Resolution Provided", "rec": "DSAT is valid", "rating": 2, "remark": "Very slow in responding. and offering a how to video on an element that we are unable to use via the package we have subscribed to! should have checked what level of service we are using and responded with the relevant advice.", "account": "Starter", "product_area": "Templates", "support_dsat": "Lacked Care & Attention", "product_dsat": "", "summary": "The DSAT was driven by slow response to an urgent request and misaligned support, where guidance on the Bulk Send feature did not consider the customer\u2019s Starter plan limitations in PandaDoc, resulting in irrelevant advice and frustration.  =========  We sent a step-by-step Bulk Send guide for a fea", "qa": 72.0, "week_start": "2026-04-13"}, {"id": "215473728115083", "date": "2026-04-13", "week": "Apr 13\u2013Apr 19", "agent": "Elly San Juan", "l1": "Process Related", "l2": "Incident/Bug", "l3": "Product - Bug", "rec": "For Removal", "rating": 1, "remark": "", "account": "Enterprise", "product_area": "Upload/Download Files", "support_dsat": "", "product_dsat": "", "summary": "The customer was dissatisfied because their PDF file kept getting stuck on \u201cProcessing\u201d and failed to upload despite being under the size limit and after trying multiple troubleshooting steps. Although support was able to reproduce the issue and escalated it to the Product team, there was no immedia", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473814724503", "date": "2026-04-13", "week": "Apr 13\u2013Apr 19", "agent": "Savannah Faulkner", "l1": "Billing Related", "l2": "Billing - General", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "", "account": "Enterprise", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer\u2019s subscription still showed as expired even though payment had been made through a collections agency. Support requested proof of payment to proceed with investigation, but the customer was initially unresponsive, which delayed progress and led to the ticket being closed. This resulted ", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473781733771", "date": "2026-04-13", "week": "Apr 13\u2013Apr 19", "agent": "Al Reenan Lodonia", "l1": "Billing Related", "l2": "Billing - General", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "", "summary": "The customer was dissatisfied because they kept seeing a \u201climit of usage\u201d error even after buying 100 credits. The issue was actually caused by an unpaid invoice for 16 overage documents, but this was not clearly explained at the beginning. The customer expected the 16 to be deducted from the 100 cr", "qa": 100.0, "week_start": "2026-04-13"}, {"id": "215473654706663", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Cramer Magsalansan", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 2, "remark": "", "account": "Not Identified", "product_area": "Others", "support_dsat": "", "product_dsat": "Feature not available", "summary": "The customer requested help moving a sent document between workspaces without resending, and support worked through the issue, clarified the limitations, and eventually provided the correct guidance, though the process involved some delays, confusion, and multiple follow-ups.", "qa": 88.0, "week_start": "2026-04-06"}, {"id": "215473629941243", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Mariia Savych", "l1": "Product Related", "l2": "Incident/Bug", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 2, "remark": "I still don't know when my issue will be fixed. This is really blocking our team, it makes them lose time.", "account": "Business", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "Integration issues", "summary": "The customer reported that HubSpot contacts were no longer being automatically added as recipients in PandaDoc documents, requiring manual setup instead. Support collected details, reproduced the issue, and escalated it to the Product team, which confirmed a platform issue and worked on a fix withou", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473751812461", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Grace Ann Bacolod", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 1, "remark": "None of the recommendations helped, not a single document is sent through the app - I'm paying for this service, and I don't understand what happened", "account": "Starter", "product_area": "Sending Documents", "support_dsat": "", "product_dsat": "Others", "summary": "The customer was dissatisfied due to a persistent \u201csomething went wrong\u201d error in the PandaDoc mobile app when sending documents for signature, while the web version worked normally. Support requested additional technical details (URL, device info, console logs, and .HAR file) and shared troubleshoo", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473754399197", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Jay Masternak", "l1": "Support Related", "l2": "Billing - General", "l3": "Premature Case Closure", "rec": "DSAT is valid", "rating": 2, "remark": "", "account": "Starter", "product_area": "Billing/ Subscription Management", "support_dsat": "Premature Case Closure", "product_dsat": "", "summary": "The customer was dissatisfied because they needed urgent pricing and cost estimates for high-volume usage credits but did not receive a clear or immediate quote, which impacted their ability to make a quick decision. Support explained the usage credit model, shared estimated costs, and escalated the", "qa": 48.0, "week_start": "2026-04-06"}, {"id": "215473839496004", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Mariia Savych", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "they don't untill 2-5 hours", "account": "Not Identified", "product_area": "Integrations:Salesforce", "support_dsat": "", "product_dsat": "", "summary": "The customer was setting up PandaDoc in a Salesforce sandbox and wanted to generate documents from the Case object while automatically adding multiple recipients from the CaseContactRole related object. They requested guidance but asked not to create a ticket yet, however the request was still logge", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473801456466", "date": "2026-04-10", "week": "Apr 06\u2013Apr 12", "agent": "Mariia Savych", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 2, "remark": "", "account": "Business", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer needed help setting up an email address, but since the issue was unclear, additional details and any error messages were requested; however, the customer did not respond, and the ticket was closed following the CNR process.", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473795858646", "date": "2026-04-09", "week": "Apr 06\u2013Apr 12", "agent": "Cedrick Angeles", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Business", "product_area": "Others", "support_dsat": "", "product_dsat": "Others", "summary": "The customer reported missing email notifications for sent documents despite delivery and completion statuses showing correctly. Support investigated and requested document links to review delivery logs, and later confirmed that the issue was due to signing order behavior where notification emails a", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473787945838", "date": "2026-04-09", "week": "Apr 06\u2013Apr 12", "agent": "Mariia Savych", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Incomplete Information/Resolution Provided", "rec": "For Removal", "rating": 2, "remark": "", "account": "Business", "product_area": "Billing", "support_dsat": "", "product_dsat": "Others", "summary": "The DSAT was primarily driven by slow response perception, unclear UI guidance, and insufficient early diagnosis, which led the customer to feel stuck and unsupported despite eventual resolution guidance.", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473825305502", "date": "2026-04-08", "week": "Apr 06\u2013Apr 12", "agent": "Alvin Tambalo", "l1": "Support Related", "l2": "Billing - Explanation", "l3": "Incomplete Information/Resolution Provided", "rec": "DSAT is valid", "rating": 3, "remark": "information provided was confusing in terms of payment", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "Lacked Care & Attention", "product_dsat": "", "summary": "The customer contacted support because they were confused about usage credits after receiving a notification despite having a Business subscription. During the conversation, inconsistent and unclear explanations about Forms usage, limits, and $2 per credit charges caused repeated confusion. The cust", "qa": 84.0, "week_start": "2026-04-06"}, {"id": "215473733059063", "date": "2026-04-08", "week": "Apr 06\u2013Apr 12", "agent": "Ella Bumatay", "l1": "Support Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Incomplete Information/Resolution Provided", "rec": "DSAT is valid", "rating": 1, "remark": "", "account": "Business", "product_area": "Others", "support_dsat": "Lacked Care & Attention", "product_dsat": "", "summary": "The customer contacted support asking for a phone call to urgently discuss an upcoming change that may affect the Forms feature they rely on. Support informed the customer that phone support is not available and asked for more details, but the response did not fully address the urgency and business ", "qa": 84.0, "week_start": "2026-04-06"}, {"id": "215473733511582", "date": "2026-04-08", "week": "Apr 06\u2013Apr 12", "agent": "Vi Atilano", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 1, "remark": "", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "Customer reported a high-priority issue with pricing table editing where deleting text removed entire rows. Support repeatedly requested additional information (URL and screen recording) despite the customer already providing screenshots, causing delays in investigation. The issue remained unresolve", "qa": 88.0, "week_start": "2026-04-06"}, {"id": "215473765874350", "date": "2026-04-08", "week": "Apr 06\u2013Apr 12", "agent": "Mark Reyes", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Upload/Download Files", "support_dsat": "", "product_dsat": "Others", "summary": "The customer experienced a blocker during their trial when their 11-page Word document uploaded incorrectly, preventing them from editing the template. Although they requested immediate assistance, the issue was moved to a ticket, which created a sense of delay and frustration. While the agent expla", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473718355275", "date": "2026-04-08", "week": "Apr 06\u2013Apr 12", "agent": "Jack Allan", "l1": "Billing Related", "l2": "Subscription Inquiry", "l3": "Customer - Billing Confusion", "rec": "For Removal", "rating": 2, "remark": "Ich habe immer noch das Problem", "account": "Business", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "The customer was dissatisfied due to account and subscription confusion, as they were unable to access templates and saw an expired subscription message despite believing their plan was active. Support explained that ownership transfer and seat removal were required before changes, and later clarifi", "qa": 84.0, "week_start": "2026-04-06"}, {"id": "215473729088708", "date": "2026-04-07", "week": "Apr 06\u2013Apr 12", "agent": "Yana Martynenko", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 2, "remark": "Waited a long time, and the proposed solution didn't work", "account": "Enterprise", "product_area": "Integrations:Salesforce", "support_dsat": "", "product_dsat": "Integration issues", "summary": "The customer experienced an issue where PandaDoc values were not syncing back to Salesforce. Support initially provided general troubleshooting steps and confirmed the integration was correctly set up, but the issue persisted. After further investigation, it was found that Salesforce dropdown field ", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473636662968", "date": "2026-04-07", "week": "Apr 06\u2013Apr 12", "agent": "Ana Manuel", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "Fin closed before cx answered", "rec": "For Removal", "rating": 1, "remark": "vous ne m'avez pas laiss\u00e9 le temps d'envoyer mon probl\u00e8me pour le r\u00e9gler", "account": "Business", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "", "summary": "Customer reported a persistent promotional banner in pricing tables while designing documents. Fin and Support provided troubleshooting steps and asked for the document URL, but the issue was not resolved since the customer was unresponsive and the ticket was closed due to our CNR process, leading t", "qa": 88.0, "week_start": "2026-04-06"}, {"id": "215473710710246", "date": "2026-04-06", "week": "Apr 06\u2013Apr 12", "agent": "Ana Manuel", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 3, "remark": "", "account": "Starter", "product_area": "Document and Data Management", "support_dsat": "", "product_dsat": "", "summary": "Customer reported that a signer link expired and reminders failed to send. Support explained that Starter and Free eSign plans have a 60-day expiration, which disables reminders and invalidates links. The customer was advised to resend the document by editing it, and informed about auto-reminders an", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473636590195", "date": "2026-04-06", "week": "Apr 06\u2013Apr 12", "agent": "Cramer Magsalansan", "l1": "Resource Constraint", "l2": "Discount Request", "l3": "Current Plan Limitation", "rec": "For Removal", "rating": 1, "remark": "", "account": "Starter", "product_area": "Billing/ Subscription Management", "support_dsat": "", "product_dsat": "", "summary": "Customer asked for discount codes due to high pricing, but support confirmed no discounts are available and only offered standard pricing and plan changes. The issue was resolved without a pricing concession, leaving the customer considering cheaper alternatives.", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473766647072", "date": "2026-04-06", "week": "Apr 06\u2013Apr 12", "agent": "Rachele Ong", "l1": "Resource Constraint", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "Customer reported a high-priority issue with the drag-to-move feature, we gathered more details . The issue resolved on its own before a solution was provided, leading to a poor experience and DSAT.", "qa": 100.0, "week_start": "2026-04-06"}, {"id": "215473707567709", "date": "2026-04-05", "week": "Mar 30\u2013Apr 05", "agent": "Patricia Nicole Nepomuceno", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "Feature not working as expected", "rec": "For Removal", "rating": 1, "remark": "Not resolved. The problem is accross the entire company can you please fix the email issue for every user on our account ASAP", "account": "Enterprise", "product_area": "Emails", "support_dsat": "", "product_dsat": "Others", "summary": "The customer reported ongoing email delivery issues in PandaDoc affecting both their team and clients, leading to missed sales. While Support identified and fixed an issue with the customer\u2019s email being on the suppression list, the broader concern about clients not receiving emails was not fully re", "qa": 100.0, "week_start": "2026-03-30"}, {"id": "215473708300482", "date": "2026-04-03", "week": "Mar 30\u2013Apr 05", "agent": "Jd Dela Llana", "l1": "Customer Related", "l2": "Troubleshooting (Break/Fix)", "l3": "TS Requires more information from Cx", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Integrations:Hubspot", "support_dsat": "", "product_dsat": "", "summary": "The customer reported an issue with the PandaDoc HubSpot integration. Support asked for more details and suggested reconnecting the integration, but customer was unresponsive and ticket was closed due to our CNR process", "qa": 100.0, "week_start": "2026-03-30"}, {"id": "215473684929063", "date": "2026-04-02", "week": "Mar 30\u2013Apr 05", "agent": "Elly San Juan", "l1": "Resource Constraint", "l2": "Account Update request", "l3": "Product Feature Confusion", "rec": "For Removal", "rating": 3, "remark": "", "account": "Enterprise", "product_area": "Others", "support_dsat": "", "product_dsat": "", "summary": "The customer initially submitted a CSAT rating but later changed it to a 3-star rating. The interaction was resolved after the workspace deletion request was completed in PandaDoc, but the change in rating suggests the customer had some level of dissatisfaction with the overall experience despite th", "qa": 88.0, "week_start": "2026-03-30"}, {"id": "215473636979917", "date": "2026-04-01", "week": "Mar 30\u2013Apr 05", "agent": "Jonathon Gillis", "l1": "Product Related", "l2": "Troubleshooting (Break/Fix)", "l3": "UI Changes", "rec": "For Removal", "rating": 1, "remark": "", "account": "Business", "product_area": "Others", "support_dsat": "", "product_dsat": "New UI Related issue", "summary": "The customer was dissatisfied due to frustration with sudden platform changes that disrupted their workflow, combined with delayed real-time support and reliance on email follow-up instead of immediate assistance", "qa": 100.0, "week_start": "2026-03-30"}], "weeks_list": [{"start": "2026-03-30", "label": "Mar 30\u2013Apr 05"}, {"start": "2026-04-06", "label": "Apr 06\u2013Apr 12"}, {"start": "2026-04-13", "label": "Apr 13\u2013Apr 19"}, {"start": "2026-04-20", "label": "Apr 20\u2013Apr 26"}, {"start": "2026-04-27", "label": "Apr 27\u2013May 03"}]};
 
-const COACHING_DATA = [
-  {agent:'AJ Tambalo',cases:1,qa:'84%',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',valid:'Yes',reasons:'Support (1)',afi:'S2 AFI: Disclose per-credit costs ($2/credit) upfront before confirming document creation is unlimited. Inconsistent framing caused billing confusion and a valid DSAT.',rec:'coaching',reclabel:'Coaching required — S2 billing accuracy'},
-  {agent:'Ella Bumatay',cases:1,qa:'84%',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',valid:'Yes',reasons:'Support (1)',afi:'S2 AFI: Read full customer message before responding. Customer clearly stated the Forms removal concern; asking for clarification indicated message was not fully read.',rec:'coaching',reclabel:'Coaching required — S2 context / message reading'},
-  {agent:'Jack Allan',cases:1,qa:'84%',s1:'Meets Expectation',s2:'Needs Improvement',s3:'Meets Expectation',valid:'No',reasons:'Billing (1)',afi:'S2 AFI: Address all concerns raised in same response. HubSpot integration issue was mentioned alongside account expiry but was not acknowledged.',rec:'minor',reclabel:'Coaching note — S2 completeness'},
-  {agent:'Cramer Magsalansan',cases:2,qa:'94%',s1:'1x Needs Improvement',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1), Resource (1)',afi:"S1 AFI (Case 1): Shorten acknowledgment opening — avoid stacking multiple empathy phrases. Keep specific and forward-moving. Example: 'I can see the issue — here is what is happening and next steps.'",rec:'minor',reclabel:'Minor coaching — S1 response efficiency'},
-  {agent:'Ana Manuel',cases:2,qa:'94%',s1:'1x Needs Improvement',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Resource (2)',afi:"S1 AFI (Case 14): When first response is 3+ days late, explicitly acknowledge and apologize for the delay. Otherwise strong empathy and problem-solving on both cases.",rec:'minor',reclabel:'Minor coaching — S1 empathy on delayed responses'},
-  {agent:'Vi Atilano',cases:1,qa:'88%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Needs Improvement',valid:'No',reasons:'Resource (1)',afi:"S3 AFI: When actively investigating, set ticket to On Hold or In Progress — not Pending. Pending status triggers automated CNR survey which conflicted with ongoing investigation and confused the customer.",rec:'minor',reclabel:'Process compliance coaching — ticket status hygiene'},
-  {agent:'Elly San Juan',cases:1,qa:'88%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Needs Improvement',valid:'No',reasons:'Resource (1)',afi:"S3 AFI: Used 'Account Deletion' as product area tag — correct tag is 'Settings, Workspaces & User Roles'. Review product area taxonomy for workspace-related tickets.",rec:'minor',reclabel:'Process compliance coaching — product area tagging'},
-  {agent:'Mariia Savych',cases:4,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (2), Resource (2)',afi:'No coaching needed. All four DSATs are product or resource-driven. Strong communicator in difficult no-ETA situations; handled premature ticket routing scenario professionally.',rec:'none',reclabel:'No coaching required'},
-  {agent:'Grace Ann Bacolod',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Strong empathy and thorough troubleshooting on mobile app bug. Clear ownership language throughout.',rec:'none',reclabel:'No coaching required'},
-  {agent:'Cedrick Angeles',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Correctly identified signing order logic as root cause. Smooth colleague handoff.',rec:'none',reclabel:'No coaching required'},
-  {agent:'Mark Reyes',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Accurately diagnosed Word-to-PDF upload limitation and provided standard workaround.',rec:'none',reclabel:'No coaching required'},
-  {agent:'Nicole Nepomuceno',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Empathetic handover, clear suppression list explanation, two-part issue handled correctly.',rec:'none',reclabel:'No coaching required'},
-  {agent:'JD Dela Llana',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Empathetic and accurate troubleshooting steps for HubSpot integration. Clear instructions.',rec:'none',reclabel:'No coaching required'},
-  {agent:'Yana Martynenko',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'Exemplary handling. Moved to live session to diagnose Salesforce field mismatch; thorough internal documentation. Recommended for recognition.',rec:'recog',reclabel:'No coaching required — flag for recognition'},
-  {agent:'Rachele Ong',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Resource (1)',afi:"No coaching needed. Gathered details correctly; issue self-resolved before investigation could be completed. Delay-driven DSAT.",rec:'none',reclabel:'No coaching required'},
-  {agent:'Jonathon Gillis',cases:1,qa:'100%',s1:'Meets Expectation',s2:'Meets Expectation',s3:'Meets Expectation',valid:'No',reasons:'Product (1)',afi:'No coaching needed. Excellent empathy for UI change disruption; clear navigation guidance for new editor layout.',rec:'none',reclabel:'No coaching required'},
-];
+// ─── Color map ───────────────────────────────────
+const L1_COLORS = {
+  'Product Related':   '#2563eb',
+  'Billing Related':   '#dc2626',
+  'Support Related':   '#7c3aed',
+  'Resource Constraint': '#ea580c',
+  'Process Related':   '#0d9488',
+  'Customer Related':  '#0891b2',
+  'Other':             '#9ca3af',
+};
+const CHART_PALETTE = ['#2563eb','#dc2626','#ea580c','#16a34a','#7c3aed','#0d9488','#d97706','#0891b2','#db2777','#6b7280'];
 
-const INSIGHTS_DATA = [
-  {cat:'Product DSATs',color:'#60a5fa',finding:'All 10 product DSATs scored 88–100% on QA. Agents performed correctly — DSAT was driven by product limitations, not support quality.',impact:'19 of 21 DSATs are eligible for removal from agent CSAT impact.',action:'Proceed with removal request. Provide product team with integration failure log (HubSpot + Salesforce) and mobile app bug report.',owner:'QA Lead + Product Team'},
-  {cat:'Product DSATs',color:'#60a5fa',finding:'Integration failures (HubSpot + Salesforce) drove 3 DSATs. No resolution timeline was available. Customers accepted explanations but still rated 1–2.',impact:'Customer trust and effort score eroded by unresolved integration bugs.',action:'Submit consolidated integration DSAT report to Product. Request proactive communication templates for no-ETA scenarios.',owner:'QA Lead + Product Team'},
-  {cat:'Product DSATs',color:'#60a5fa',finding:"New UI changes (Editor, Workflow Builder) caused 2 DSATs. Customers were surprised by interface changes mid-workflow.",impact:"Change-driven friction that agents cannot prevent.",action:'Recommend Product/Marketing provide advance notice before UI changes roll out, especially for payment-related features.',owner:'QA Lead to Leadership'},
-  {cat:'Product DSATs',color:'#60a5fa',finding:"'Others' is the sub-tag for 5 of 10 product DSATs — masking actionable product feedback signals.",impact:'Under-reporting of specific product issues (mobile bugs, email delivery, doc processing).',action:'Add sub-tags to Playvox taxonomy: Mobile App Bug, Email Delivery Issue, Document Processing Error.',owner:'QA Lead'},
-  {cat:'Resource Constraints',color:'#e879f9',finding:'63% of resource DSATs (5 of 8) involved 12h+ assignment delays. Cases span multiple regions — likely a coverage and routing gap, not individual performance.',impact:'Customers experiencing long waits before first response, independent of agent quality.',action:'Review shift coverage and ticket routing rules for off-peak hours across all regions.',owner:'QA Lead to Support Ops'},
-  {cat:'Resource Constraints',color:'#e879f9',finding:'Premature ticket creation triggered one DSAT. Customer explicitly asked not to create a ticket; system routed it anyway.',impact:'Process/routing gap causing negative experience before the interaction begins.',action:'Review Intercom routing rules for scenarios where customers indicate they are not ready to open a ticket.',owner:'QA Lead to Ops/Tooling'},
-  {cat:'Resource Constraints',color:'#e879f9',finding:'Ticket status mis-tagging on one case: ticket left on Pending while actively investigating, triggering an automated resolved? survey mid-investigation.',impact:'Automated survey conflicted with active investigation and confused the customer.',action:'Reinforce ticket status hygiene across all agents: use On Hold or In Progress when actively working a case.',owner:'QA Lead to All Agents'},
-  {cat:'Valid DSATs',color:'#f87171',finding:'Both valid DSATs (AJ Tambalo, Ella Bumatay) scored 84% — below the 85% goal. Both are S2 Problem Solving failures.',impact:'2 valid DSATs directly attributable to agent behavior.',action:'Schedule individual coaching sessions. See Agent Coaching Snapshot tab for detailed AFIs.',owner:'QA Lead'},
-  {cat:'Overall Performance',color:'#4ade80',finding:'Average QA score across all 21 DSATs is 95.4% — well above the 85% goal. 17 of 21 agents scored 88% or above.',impact:'Strong team-wide QA performance despite DSAT volume.',action:'Recognize high-performing agents at next team meeting. Flag Yana Martynenko for exemplary Salesforce case ownership.',owner:'QA Lead to All Team Leads'},
-];
-
-// ── RENDER LOG ───────────────────────────────────────────────
-function renderLog(data) {
-  const tbody = document.getElementById('log-tbody');
-  tbody.innerHTML = data.map(d => `<tr>
-    <td style="color:var(--muted)">${d.n}</td>
-    <td>${d.date.replace('2026-0','Apr ').replace('2026-','Apr ')}</td>
-    <td class="mono" style="font-size:.72rem">${d.convid}</td>
-    <td><strong>${d.agent}</strong></td>
-    <td><span class="l1-tag ${l1Class(d.l1)}">${d.l1}</span></td>
-    <td style="font-size:.75rem">${d.sub}</td>
-    <td style="font-size:.75rem;color:var(--muted2)">${d.area}</td>
-    <td><span class="badge badge-gray">${d.acct}</span></td>
-    <td style="text-align:center">${'★'.repeat(d.rating)}<span style="color:var(--surface3)">${'★'.repeat(5-d.rating)}</span></td>
-    <td><span class="badge ${d.qa>=90?'badge-green':d.qa>=85?'badge-yellow':'badge-red'}">${d.qa}%</span></td>
-    <td><span class="badge ${d.goal==='YES'?'badge-green':'badge-red'}">${d.goal}</span></td>
-    <td style="font-size:.72rem">${skillBadge(d.s1)}</td>
-    <td style="font-size:.72rem">${skillBadge(d.s2)}</td>
-    <td style="font-size:.72rem">${skillBadge(d.s3)}</td>
-    <td style="font-size:.75rem">${d.valid==='Yes'?'<span class="badge badge-red">Valid ⚠</span>':'<span class="badge badge-green">For Removal</span>'}</td>
-    <td style="max-width:240px;font-size:.72rem;color:var(--muted2);line-height:1.4">${d.summary}</td>
-  </tr>`).join('');
-  document.getElementById('filter-count').textContent = `Showing ${data.length} of 21`;
+function l1Badge(l1) {
+  const map = {
+    'Product Related':   'badge-product',
+    'Billing Related':   'badge-billing',
+    'Support Related':   'badge-support',
+    'Resource Constraint': 'badge-resource',
+    'Resource Constraints': 'badge-resource',
+    'Process Related':   'badge-process',
+    'Customer Related':  'badge-customer',
+  };
+  return `<span class="badge ${map[l1]||'badge-other'}">${l1}</span>`;
+}
+function recBadge(rec) {
+  return rec === 'DSAT is valid'
+    ? `<span class="badge badge-valid">✗ Valid</span>`
+    : `<span class="badge badge-removal">✓ Removal</span>`;
 }
 
-function filterLog() {
-  const l1 = document.getElementById('filter-l1').value;
-  const valid = document.getElementById('filter-valid').value;
-  const filtered = LOG_DATA.filter(d =>
-    (!l1 || d.l1 === l1) &&
-    (!valid || d.valid === valid)
-  );
-  renderLog(filtered);
+// ─── Filtering state ──────────────────────────────
+let filterDateFrom = '2026-04-01';
+let filterDateTo   = '2026-04-30';
+let filterL1       = '';
+let filterRec      = 'all';
+let filterAgent    = '';
+
+function applyFilters(rows) {
+  return rows.filter(r => {
+    if (filterDateFrom && r.date < filterDateFrom) return false;
+    if (filterDateTo   && r.date > filterDateTo)   return false;
+    if (filterL1 && r.l1 !== filterL1) return false;
+    if (filterRec !== 'all' && r.rec !== filterRec) return false;
+    if (filterAgent && r.agent !== filterAgent) return false;
+    return true;
+  });
 }
 
-function skillBadge(s) {
-  return s === 'Needs Improvement'
-    ? '<span style="color:var(--red);font-weight:700">⚠ NI</span>'
-    : '<span style="color:var(--muted2)">ME</span>';
+// ─── Chart instances (to destroy/recreate) ───────
+let charts = {};
+function destroyChart(key) {
+  if (charts[key]) { charts[key].destroy(); delete charts[key]; }
 }
 
-// ── RENDER COACHING ──────────────────────────────────────────
-function renderCoaching() {
-  const order = ['coaching','minor','recog','none'];
-  const sorted = [...COACHING_DATA].sort((a,b) => order.indexOf(a.rec) - order.indexOf(b.rec));
-  const el = document.getElementById('coaching-cards');
-  el.innerHTML = sorted.map(c => {
-    const recClass = {coaching:'rec-coaching',minor:'rec-minor',recog:'rec-recog',none:'rec-none'}[c.rec];
-    const qaColor = parseFloat(c.qa) >= 90 ? 'var(--accent)' : parseFloat(c.qa) >= 85 ? 'var(--yellow)' : 'var(--red)';
-    return `<div class="coach-card ${c.valid==='Yes'?'coach-valid':''}">
-      <div class="coach-header">
+// ─── Dashboard render ─────────────────────────────
+function renderDashboard() {
+  const rows = applyFilters(RAW_DATA.log_rows);
+  const total = rows.length;
+  const valid = rows.filter(r => r.rec === 'DSAT is valid').length;
+  const removal = rows.filter(r => r.rec === 'For Removal').length;
+
+  const qaScores = rows.map(r => r.qa).filter(q => q > 0);
+  const avgQa = qaScores.length ? (qaScores.reduce((a,b)=>a+b,0)/qaScores.length).toFixed(1) : '—';
+  const agents = new Set(rows.map(r=>r.agent).filter(Boolean));
+
+  // KPIs
+  document.getElementById('kpi-total').textContent   = total;
+  document.getElementById('kpi-valid').textContent   = valid;
+  document.getElementById('kpi-removal').textContent = removal;
+  document.getElementById('kpi-qa').textContent      = avgQa + '%';
+  document.getElementById('kpi-agents').textContent  = agents.size;
+
+  document.getElementById('kpi-valid-pct').textContent   = total ? ((valid/total*100).toFixed(0)+'% of total') : '—';
+  document.getElementById('kpi-removal-pct').textContent = total ? ((removal/total*100).toFixed(0)+'% of total') : '—';
+
+  // Top L1
+  const l1c = {};
+  rows.forEach(r => { l1c[r.l1] = (l1c[r.l1]||0)+1; });
+  const topL1 = Object.entries(l1c).sort((a,b)=>b[1]-a[1])[0];
+  if (topL1) {
+    document.getElementById('kpi-top-l1').textContent = topL1[0];
+    document.getElementById('kpi-top-l1-pct').textContent = `${topL1[1]} DSATs (${(topL1[1]/total*100).toFixed(0)}%)`;
+  }
+
+  // Weekly trend chart
+  destroyChart('weeklyTrend');
+  const weekOrder = RAW_DATA.weeks_list.map(w=>w.start);
+  const weekLabels = RAW_DATA.weeks_list.map(w=>w.label);
+  const weeklyTotals = weekOrder.map(ws => rows.filter(r=>r.week_start===ws).length);
+  const weeklyValids = weekOrder.map(ws => rows.filter(r=>r.week_start===ws && r.rec==='DSAT is valid').length);
+  const ctx1 = document.getElementById('chartWeeklyTrend').getContext('2d');
+  charts['weeklyTrend'] = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: weekLabels,
+      datasets: [
+        { label: 'Total DSATs', data: weeklyTotals, backgroundColor: 'rgba(59,130,246,.5)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 4 },
+        { label: 'Valid DSATs', data: weeklyValids, backgroundColor: 'rgba(239,68,68,.7)', borderColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#6b7280', font: { size: 11 } } } },
+      scales: {
+        x: { ticks: { color: '#9ca3af', font: { size: 10.5 } }, grid: { color: '#f3f4f6' } },
+        y: { ticks: { color: '#9ca3af', font: { size: 10.5 } }, grid: { color: '#f3f4f6' }, beginAtZero: true }
+      }
+    }
+  });
+
+  // L1 Donut
+  destroyChart('l1Donut');
+  const l1Keys = Object.keys(l1c);
+  const l1Vals = l1Keys.map(k=>l1c[k]);
+  const ctx2 = document.getElementById('chartL1Donut').getContext('2d');
+  charts['l1Donut'] = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+      labels: l1Keys,
+      datasets: [{ data: l1Vals, backgroundColor: l1Keys.map(k=>L1_COLORS[k]||'#64748b'), borderWidth: 2, borderColor: '#ffffff' }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true, cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { color: '#6b7280', font: { size: 10.5 }, padding: 10, boxWidth: 10 } } }
+    }
+  });
+
+  // L2 bar list
+  const l2c = {};
+  rows.forEach(r => { if (r.l2) l2c[r.l2] = (l2c[r.l2]||0)+1; });
+  const l2sorted = Object.entries(l2c).sort((a,b)=>b[1]-a[1]).slice(0,9);
+  const l2max = l2sorted[0]?.[1]||1;
+  document.getElementById('l2BarList').innerHTML = l2sorted.map(([k,v],i)=>`
+    <div class="bar-item">
+      <div class="bar-item-header">
+        <span class="bar-item-label">${k}</span>
+        <span class="bar-item-value">${v}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/l2max*100).toFixed(1)}%;background:${CHART_PALETTE[i%CHART_PALETTE.length]}"></div></div>
+    </div>`).join('');
+
+  // L3 bar list
+  const l3c = {};
+  rows.forEach(r => { if (r.l3) l3c[r.l3] = (l3c[r.l3]||0)+1; });
+  const l3sorted = Object.entries(l3c).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const l3max = l3sorted[0]?.[1]||1;
+  document.getElementById('l3BarList').innerHTML = l3sorted.map(([k,v],i)=>`
+    <div class="bar-item">
+      <div class="bar-item-header">
+        <span class="bar-item-label">${k}</span>
+        <span class="bar-item-value">${v}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/l3max*100).toFixed(1)}%;background:${CHART_PALETTE[i%CHART_PALETTE.length]}"></div></div>
+    </div>`).join('');
+
+  // Attribution
+  const suppCount = rows.filter(r=>r.support_dsat && r.support_dsat!=='---').length;
+  const prodCount  = rows.filter(r=>r.product_dsat && r.product_dsat!=='---').length;
+  document.getElementById('attr-support').textContent = suppCount;
+  document.getElementById('attr-product').textContent = prodCount;
+
+  const suppR = {};
+  rows.forEach(r=>{ if(r.support_dsat && r.support_dsat!=='---') suppR[r.support_dsat]=(suppR[r.support_dsat]||0)+1; });
+  const suppMax = Math.max(...Object.values(suppR),1);
+  document.getElementById('supportReasonsBar').innerHTML = Object.entries(suppR).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`
+    <div class="bar-item">
+      <div class="bar-item-header"><span class="bar-item-label">${k}</span><span class="bar-item-value">${v}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/suppMax*100).toFixed(1)}%;background:var(--red)"></div></div>
+    </div>`).join('') || '<div style="color:var(--text3);font-size:12px">None in filtered set</div>';
+
+  // Account type chart
+  destroyChart('accountType');
+  const accRows = rows.filter(r=>r.account);
+  const accC = {};
+  accRows.forEach(r=>{ accC[r.account]=(accC[r.account]||0)+1; });
+  const accKeys = Object.keys(accC); const accVals = accKeys.map(k=>accC[k]);
+  const ctx3 = document.getElementById('chartAccountType').getContext('2d');
+  charts['accountType'] = new Chart(ctx3, {
+    type: 'doughnut',
+    data: { labels: accKeys, datasets: [{ data: accVals, backgroundColor: CHART_PALETTE, borderWidth: 2, borderColor: '#ffffff' }] },
+    options: {
+      responsive: true, maintainAspectRatio: true, cutout: '55%',
+      plugins: { legend: { position: 'bottom', labels: { color: '#6b7280', font: { size: 10.5 }, padding: 8, boxWidth: 10 } } }
+    }
+  });
+
+  // Product area bar
+  const paC = {};
+  rows.forEach(r=>{ if(r.product_area && r.product_area!=='Others' && r.product_area!=='No Product Area') paC[r.product_area]=(paC[r.product_area]||0)+1; });
+  const paSorted = Object.entries(paC).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const paMax = paSorted[0]?.[1]||1;
+  document.getElementById('productAreaBar').innerHTML = paSorted.map(([k,v],i)=>`
+    <div class="bar-item">
+      <div class="bar-item-header"><span class="bar-item-label">${k}</span><span class="bar-item-value">${v}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/paMax*100).toFixed(1)}%;background:${CHART_PALETTE[i%CHART_PALETTE.length]}"></div></div>
+    </div>`).join('');
+}
+
+// ─── Weekly Breakdown ─────────────────────────────
+let activeWeek = null;
+function renderWeeklyTab() {
+  const pills = document.getElementById('weekPills');
+  pills.innerHTML = `<button class="week-pill ${!activeWeek?'active':''}" data-week="">All Weeks</button>` +
+    RAW_DATA.weeks_list.map(w=>`<button class="week-pill ${activeWeek===w.start?'active':''}" data-week="${w.start}">${w.label}</button>`).join('');
+  pills.querySelectorAll('.week-pill').forEach(btn => {
+    btn.addEventListener('click', () => { activeWeek = btn.dataset.week; renderWeeklyTab(); });
+  });
+
+  const allRows = applyFilters(RAW_DATA.log_rows);
+  const weeksToShow = activeWeek
+    ? RAW_DATA.weeks_list.filter(w=>w.start===activeWeek)
+    : RAW_DATA.weeks_list;
+
+  const content = document.getElementById('weeklyContent');
+  content.innerHTML = weeksToShow.map(w => {
+    const rows = allRows.filter(r=>r.week_start===w.start);
+    if (!rows.length) return `<div class="card" style="margin-bottom:16px"><div class="card-body"><div class="no-results"><div class="no-results-icon">📭</div>No DSATs for ${w.label} in current filter</div></div></div>`;
+
+    const l1c={},l2c={},l3c={};
+    rows.forEach(r=>{ l1c[r.l1]=(l1c[r.l1]||0)+1; l2c[r.l2]=(l2c[r.l2]||0)+1; l3c[r.l3]=(l3c[r.l3]||0)+1; });
+    const valid = rows.filter(r=>r.rec==='DSAT is valid').length;
+    const topL1 = Object.entries(l1c).sort((a,b)=>b[1]-a[1])[0];
+    const topL2 = Object.entries(l2c).sort((a,b)=>b[1]-a[1])[0];
+    const topL3 = Object.entries(l3c).sort((a,b)=>b[1]-a[1])[0];
+
+    const rowsHtml = rows.map(r=>`
+      <tr>
+        <td class="td-mono">${r.id}</td>
+        <td>${r.date}</td>
+        <td class="td-primary">${r.agent||'—'}</td>
+        <td>${l1Badge(r.l1)}</td>
+        <td>${r.l2||'—'}</td>
+        <td>${r.l3||'—'}</td>
+        <td>${recBadge(r.rec)}</td>
+        <td class="rating-${r.rating}">${r.rating}★</td>
+      </tr>`).join('');
+
+    return `
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
         <div>
-          <div class="coach-name">${c.agent}</div>
-          <div class="coach-team">${c.cases} case${c.cases>1?'s':''} · Reasons: ${c.reasons}</div>
+          <div class="card-title">Week of ${w.label}</div>
+          <div class="card-sub">${rows.length} DSATs · ${valid} valid · Top reason: ${topL1?topL1[0]:'—'}</div>
         </div>
-        <div class="coach-scores">
-          <div class="score-pill"><div class="score-val" style="color:${qaColor}">${c.qa}</div><div class="score-lbl">QA Score</div></div>
-          <span class="rec-badge ${recClass}">${c.reclabel}</span>
-          ${c.valid==='Yes' ? '<span class="badge badge-red">⚠ Valid DSAT</span>' : ''}
+        <div style="display:flex;gap:20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text3)">
+          <span>Top L2: <span style="color:var(--text)">${topL2?topL2[0]:'—'}</span></span>
+          <span>Top L3: <span style="color:var(--text)">${topL3?topL3[0]:'—'}</span></span>
         </div>
       </div>
-      <div class="skill-row">
-        <span style="font-size:.72rem;color:var(--muted)">S1 Empathy:</span>
-        <span class="skill-tag ${c.s1.includes('Needs')?'skill-need':'skill-meet'}">${c.s1}</span>
-        <span style="font-size:.72rem;color:var(--muted);margin-left:4px">S2 Problem Solving:</span>
-        <span class="skill-tag ${c.s2.includes('Needs')?'skill-need':'skill-meet'}">${c.s2}</span>
-        <span style="font-size:.72rem;color:var(--muted);margin-left:4px">S3 Process:</span>
-        <span class="skill-tag ${c.s3.includes('Needs')?'skill-need':'skill-meet'}">${c.s3}</span>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border)">
+        ${['Total DSATs','Valid','For Removal','Avg Rating'].map((label,i)=>{
+          const vals = [rows.length, valid, rows.length-valid, (rows.reduce((s,r)=>s+(+r.rating||0),0)/rows.length).toFixed(1)];
+          const colors = ['var(--accent)','var(--red)','var(--green)','var(--amber)'];
+          return `<div style="padding:14px 18px;border-right:1px solid var(--border)">
+            <div style="font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${label}</div>
+            <div style="font-size:22px;font-weight:700;color:${colors[i]};font-family:'DM Mono',monospace">${vals[i]}</div>
+          </div>`;
+        }).join('')}
       </div>
-      <div class="afi-box"><strong>AFI / Note:</strong> ${c.afi}</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Conv ID</th><th>Date</th><th>Agent</th><th>L1</th><th>L2</th><th>L3</th><th>Verdict</th><th>Rating</th>
+          </tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
     </div>`;
   }).join('');
 }
 
-// ── RENDER INSIGHTS ──────────────────────────────────────────
-function renderInsights() {
-  const cats = [...new Set(INSIGHTS_DATA.map(i => i.cat))];
-  const el = document.getElementById('insights-content');
-  el.innerHTML = cats.map(cat => {
-    const items = INSIGHTS_DATA.filter(i => i.cat === cat);
-    const color = items[0].color;
-    return `<h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin:20px 0 12px;color:${color}">${cat}</h3>` +
-    items.map(i => `<div class="insight-card" style="--ic-color:${color}">
-      <div class="insight-cat">${i.cat}</div>
-      <div class="insight-finding">${i.finding}</div>
-      <div style="font-size:.78rem;color:var(--muted2);margin-bottom:8px">Impact: ${i.impact}</div>
-      <div class="insight-action"><strong>→ Recommended Action:</strong> ${i.action} <span style="color:var(--muted);margin-left:6px">[Owner: ${i.owner}]</span></div>
-    </div>`).join('');
+// ─── DSAT Log ─────────────────────────────────────
+let logPage = 1;
+const LOG_PER_PAGE = 15;
+let logSort = { col: 'date', dir: -1 };
+let logSearch = '';
+
+function sortRows(rows) {
+  return [...rows].sort((a,b)=>{
+    let av = a[logSort.col]||'', bv = b[logSort.col]||'';
+    if (logSort.col==='rating') { av=+av; bv=+bv; }
+    if (logSort.col==='qa') { av=+av; bv=+bv; }
+    return av < bv ? -logSort.dir : av > bv ? logSort.dir : 0;
+  });
+}
+
+function renderLog() {
+  let rows = applyFilters(RAW_DATA.log_rows);
+  if (logSearch) {
+    const q = logSearch.toLowerCase();
+    rows = rows.filter(r=>
+      r.id.toLowerCase().includes(q)||
+      (r.agent||'').toLowerCase().includes(q)||
+      (r.summary||'').toLowerCase().includes(q)||
+      (r.l2||'').toLowerCase().includes(q)||
+      (r.l3||'').toLowerCase().includes(q)
+    );
+  }
+  rows = sortRows(rows);
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total/LOG_PER_PAGE));
+  if (logPage > totalPages) logPage = totalPages;
+  const pageRows = rows.slice((logPage-1)*LOG_PER_PAGE, logPage*LOG_PER_PAGE);
+
+  document.getElementById('logCount').textContent = `Showing ${pageRows.length} of ${total} records`;
+
+  const body = document.getElementById('logBody');
+  body.innerHTML = pageRows.length ? pageRows.map(r=>`
+    <tr>
+      <td class="td-mono">${r.id.slice(-8)}</td>
+      <td>${r.date}</td>
+      <td class="td-primary">${r.agent||'—'}</td>
+      <td>${l1Badge(r.l1)}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.l2||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.l3||'—'}</td>
+      <td>${recBadge(r.rec)}</td>
+      <td class="rating-${r.rating}">${r.rating}★</td>
+      <td>${r.account||'—'}</td>
+      <td class="tooltip-cell" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        ${r.summary?r.summary.slice(0,80)+'…':'—'}
+        ${r.summary?`<div class="tooltip-content">${r.summary}</div>`:''}
+      </td>
+    </tr>`).join('') :
+    `<tr><td colspan="10"><div class="no-results"><div class="no-results-icon">🔍</div>No records match your filters</div></td></tr>`;
+
+  document.getElementById('pageInfo').textContent = `Page ${logPage} of ${totalPages} · ${total} records`;
+
+  const pageBtns = document.getElementById('pageBtns');
+  pageBtns.innerHTML = `
+    <button class="page-btn" id="prevPage" ${logPage<=1?'disabled':''}>‹</button>
+    ${Array.from({length:Math.min(totalPages,7)},(_,i)=>{
+      const p=i+1; return `<button class="page-btn ${p===logPage?'active':''}" data-page="${p}">${p}</button>`;
+    }).join('')}
+    ${totalPages>7?`<span style="color:var(--text3);font-size:12px;padding:0 4px">…</span><button class="page-btn ${totalPages===logPage?'active':''}" data-page="${totalPages}">${totalPages}</button>`:''}
+    <button class="page-btn" id="nextPage" ${logPage>=totalPages?'disabled':''}>›</button>`;
+
+  pageBtns.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>{ logPage=+b.dataset.page; renderLog(); }));
+  const prev=document.getElementById('prevPage'),next=document.getElementById('nextPage');
+  if(prev) prev.addEventListener('click',()=>{ logPage--; renderLog(); });
+  if(next) next.addEventListener('click',()=>{ logPage++; renderLog(); });
+
+  // Sort headers
+  document.querySelectorAll('#logTable thead th[data-col]').forEach(th=>{
+    th.classList.toggle('sorted', th.dataset.col===logSort.col);
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = th.dataset.col===logSort.col ? (logSort.dir===1?'↑':'↓') : '↕';
+    th.onclick = () => {
+      if (logSort.col===th.dataset.col) logSort.dir *= -1;
+      else { logSort.col=th.dataset.col; logSort.dir=1; }
+      logPage=1; renderLog();
+    };
+  });
+}
+
+// ─── Coaching tab ─────────────────────────────────
+function renderCoaching() {
+  const rows = applyFilters(RAW_DATA.log_rows);
+  const agentMap = {};
+  rows.forEach(r=>{
+    if (!r.agent) return;
+    if (!agentMap[r.agent]) agentMap[r.agent]={total:0,valid:0,removal:0,qaScores:[]};
+    agentMap[r.agent].total++;
+    if (r.rec==='DSAT is valid') agentMap[r.agent].valid++;
+    else agentMap[r.agent].removal++;
+    if (r.qa) agentMap[r.agent].qaScores.push(r.qa);
+  });
+  const agentList = Object.entries(agentMap).sort((a,b)=>b[1].total-a[1].total);
+
+  document.getElementById('agentTableBody').innerHTML = agentList.map(([agent,d],i)=>{
+    const qa = d.qaScores.length ? (d.qaScores.reduce((a,b)=>a+b,0)/d.qaScores.length).toFixed(1) : '—';
+    const qaCls = qa==='—'?'':'qa-'+(+qa>=85?'green':+qa>=70?'amber':'red');
+    const pct = d.total ? (d.valid/d.total*100).toFixed(0) : 0;
+    return `<tr>
+      <td class="td-mono">${i+1}</td>
+      <td class="td-primary">${agent}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text)">${d.total}</td>
+      <td style="color:var(--red);font-family:'DM Mono',monospace;font-weight:600">${d.valid}</td>
+      <td style="color:var(--green);font-family:'DM Mono',monospace;font-weight:600">${d.removal}</td>
+      <td><span class="qa-pill ${qaCls}">${qa}%</span></td>
+      <td style="width:120px">
+        <div style="display:flex;gap:2px;font-size:10px;color:var(--text3);margin-bottom:3px"><span style="color:var(--red)">${pct}% valid</span></div>
+        <div class="agent-bar"><div class="agent-bar-fill" style="width:${pct}%;background:var(--red)"></div></div>
+      </td>
+    </tr>`;
   }).join('');
+
+  // Valid DSATs list
+  const validRows = rows.filter(r=>r.rec==='DSAT is valid');
+  document.getElementById('validDsatList').innerHTML = validRows.length ? validRows.map(r=>`
+    <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:600;color:var(--text)">${r.agent||'—'}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text3)">${r.date} · ${r.id.slice(-8)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        ${l1Badge(r.l1)}
+        <span class="badge badge-other">${r.l2||'—'}</span>
+        ${r.support_dsat?`<span class="badge badge-support">${r.support_dsat}</span>`:''}
+      </div>
+      <div style="font-size:11.5px;color:var(--text2);line-height:1.6">${r.summary||'—'}</div>
+    </div>`).join('') :
+    '<div style="color:var(--text3);font-size:12px;padding:16px 0">No valid DSATs in filtered set</div>';
+
+  // Support/product reasons coaching
+  const suppR={}, prodR={};
+  rows.forEach(r=>{
+    if (r.support_dsat) suppR[r.support_dsat]=(suppR[r.support_dsat]||0)+1;
+    if (r.product_dsat) prodR[r.product_dsat]=(prodR[r.product_dsat]||0)+1;
+  });
+  const suppMax=Math.max(...Object.values(suppR),1), prodMax=Math.max(...Object.values(prodR),1);
+  document.getElementById('supportReasonsCoach').innerHTML = Object.entries(suppR).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+    <div class="bar-item"><div class="bar-item-header"><span class="bar-item-label">${k}</span><span class="bar-item-value">${v}</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${(v/suppMax*100).toFixed(1)}%;background:var(--red)"></div></div></div>`).join('')||'<div style="color:var(--text3);font-size:12px">None</div>';
+  document.getElementById('productReasonsCoach').innerHTML = Object.entries(prodR).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+    <div class="bar-item"><div class="bar-item-header"><span class="bar-item-label">${k}</span><span class="bar-item-value">${v}</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${(v/prodMax*100).toFixed(1)}%;background:var(--accent)"></div></div></div>`).join('')||'<div style="color:var(--text3);font-size:12px">None</div>';
 }
 
-// ── HELPERS ──────────────────────────────────────────────────
-function l1Class(l1) {
-  if (l1.includes('Product')) return 'l1-product';
-  if (l1.includes('Resource')) return 'l1-resource';
-  if (l1.includes('Support')) return 'l1-support';
-  if (l1.includes('Billing')) return 'l1-billing';
-  if (l1.includes('Process')) return 'l1-process';
-  if (l1.includes('Tools')) return 'l1-tools';
-  return 'l1-other';
+// ─── Insights tab ─────────────────────────────────
+function renderInsights() {
+  const rows = applyFilters(RAW_DATA.log_rows);
+
+  // Top L1+L2 for April
+  const combined={};
+  rows.forEach(r=>{ const key=`${r.l1} → ${r.l2||'Unclassified'}`; combined[key]=(combined[key]||0)+1; });
+  const topCombined = Object.entries(combined).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxComb = topCombined[0]?.[1]||1;
+  document.getElementById('insightMonthTop').innerHTML = topCombined.map(([k,v],i)=>{
+    const [l1,l2]=k.split(' → ');
+    return `<div class="rank-row">
+      <div class="rank-num ${i===0?'top':'}'}">${i+1}</div>
+      <div class="rank-info">
+        <div class="rank-name">${l2||'—'}</div>
+        <div class="rank-desc">${l1}</div>
+      </div>
+      <div style="text-align:right;margin-right:10px">
+        <div class="rank-count">${v}</div>
+        <div class="rank-pct">${(v/rows.length*100).toFixed(0)}%</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar"><div class="rank-bar-fill" style="width:${(v/maxComb*100).toFixed(1)}%;background:${L1_COLORS[l1]||'var(--accent)'}"></div></div></div>
+    </div>`;
+  }).join('');
+
+  // Quarterly view — April is the only month so far
+  const l1c={};
+  rows.forEach(r=>{ l1c[r.l1]=(l1c[r.l1]||0)+1; });
+  const l1sorted = Object.entries(l1c).sort((a,b)=>b[1]-a[1]);
+  const l1max = l1sorted[0]?.[1]||1;
+  document.getElementById('insightQuarterTop').innerHTML = `
+    <div style="margin-bottom:14px;padding:10px 14px;background:var(--surface3);border-radius:8px;border:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Q2 YTD (Apr only)</div>
+      <div style="font-size:20px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)">${rows.length} <span style="font-size:13px;color:var(--text3)">total DSATs</span></div>
+      <div style="font-size:11.5px;color:var(--text3);margin-top:4px">${rows.filter(r=>r.rec==='DSAT is valid').length} valid · ${rows.filter(r=>r.rec==='For Removal').length} for removal</div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-weight:600">Top L1 Reasons — April</div>
+    ${l1sorted.map(([k,v],i)=>`
+    <div class="rank-row">
+      <div class="rank-num ${i===0?'top':''}">${i+1}</div>
+      <div class="rank-info"><div class="rank-name">${k}</div></div>
+      <div style="text-align:right;margin-right:10px"><div class="rank-count">${v}</div><div class="rank-pct">${(v/rows.length*100).toFixed(0)}%</div></div>
+      <div class="rank-bar-wrap"><div class="rank-bar"><div class="rank-bar-fill" style="width:${(v/l1max*100).toFixed(1)}%;background:${L1_COLORS[k]||'var(--accent)'}"></div></div></div>
+    </div>`).join('')}`;
+
+  // Stacked bar by week
+  destroyChart('stackedWeekly');
+  const l1Types = ['Product Related','Billing Related','Resource Constraint','Support Related','Process Related','Customer Related'];
+  const weekStarts = RAW_DATA.weeks_list.map(w=>w.start);
+  const weekLabels2 = RAW_DATA.weeks_list.map(w=>w.label);
+  const ctx4 = document.getElementById('chartStackedWeekly').getContext('2d');
+  charts['stackedWeekly'] = new Chart(ctx4, {
+    type: 'bar',
+    data: {
+      labels: weekLabels2,
+      datasets: l1Types.map(l1=>({
+        label: l1,
+        data: weekStarts.map(ws=>rows.filter(r=>r.week_start===ws && r.l1===l1).length),
+        backgroundColor: L1_COLORS[l1]+'cc',
+        borderColor: L1_COLORS[l1],
+        borderWidth: 1, borderRadius: 2
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#6b7280', font:{size:10.5}, padding:8, boxWidth:10 } } },
+      scales: {
+        x: { stacked:true, ticks:{color:'#9ca3af',font:{size:10.5}}, grid:{color:'#f3f4f6'} },
+        y: { stacked:true, ticks:{color:'#9ca3af',font:{size:10.5}}, grid:{color:'#f3f4f6'}, beginAtZero:true }
+      }
+    }
+  });
+
+  // Root cause heatmap
+  const rcByWeek = {};
+  const allL3s = [...new Set(rows.map(r=>r.l3).filter(Boolean))];
+  const top8L3 = allL3s.slice(0,8);
+  weekStarts.forEach(ws=>{
+    rcByWeek[ws]={};
+    rows.filter(r=>r.week_start===ws).forEach(r=>{ if(r.l3) rcByWeek[ws][r.l3]=(rcByWeek[ws][r.l3]||0)+1; });
+  });
+  const heatMax = Math.max(...weekStarts.flatMap(ws=>top8L3.map(l3=>rcByWeek[ws][l3]||0)), 1);
+  document.getElementById('rootCauseHeatmap').innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr>
+          <th style="padding:6px 10px;color:var(--text3);text-align:left;font-weight:600;font-size:10.5px;white-space:nowrap">Root Cause</th>
+          ${RAW_DATA.weeks_list.map(w=>`<th style="padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">${w.label}</th>`).join('')}
+          <th style="padding:6px 8px;color:var(--text3);font-weight:600">Total</th>
+        </tr></thead>
+        <tbody>
+          ${top8L3.map(l3=>{
+            const wVals = weekStarts.map(ws=>rcByWeek[ws][l3]||0);
+            const tot = wVals.reduce((a,b)=>a+b,0);
+            return `<tr>
+              <td style="padding:5px 10px;color:var(--text2);white-space:nowrap;font-size:11px">${l3}</td>
+              ${wVals.map(v=>{
+                const opacity = v ? 0.15 + (v/heatMax)*0.75 : 0.04;
+                return `<td style="padding:5px 8px;text-align:center">
+                  <div style="background:rgba(37,99,235,${opacity});border-radius:4px;padding:3px 8px;font-family:'DM Mono',monospace;font-weight:600;color:${v?'var(--text)':'var(--text3)'}">${v||'·'}</div>
+                </td>`;
+              }).join('')}
+              <td style="padding:5px 8px;text-align:center;font-family:'DM Mono',monospace;font-weight:700;color:var(--accent)">${tot}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // Key callouts
+  document.getElementById('insightCallouts').innerHTML = `
+    <div class="insight-box amber">
+      <div class="insight-title">⚠️ Billing-Related DSATs Spiked in Week 3 (Apr 20–26)</div>
+      <div class="insight-body">9 of 20 DSATs that week were Billing-related — the highest weekly billing share (45%). The majority are tied to the <strong>Essentials plan retirement</strong> and customers losing Pricing Table access unexpectedly. This is a <strong>product/policy driver</strong>, not agent-attributable, but agents need clear talking points to handle this proactively.</div>
+    </div>
+    <div class="insight-box red">
+      <div class="insight-title">🔴 "TS Requires More Information from Cx" is the #1 Root Cause (12 DSATs)</div>
+      <div class="insight-body">This L3 code indicates that DSATs closed under CNR — the agent needed more info but the customer didn't respond. While most are classified For Removal, the pattern suggests a possible gap in <strong>proactive investigation before asking for info</strong>. Agents should attempt more diagnostics before putting the ball back in the customer's court.</div>
+    </div>
+    <div class="insight-box">
+      <div class="insight-title">🔵 Product-Driven DSATs Dominate (21 Product + 16 Billing = 58%)</div>
+      <div class="insight-body">The majority of DSATs this quarter trace back to product limitations, integration failures, or billing policy changes. Only <strong>8 DSATs are classified as valid</strong>, meaning the coaching surface is narrow. Focus coaching energy on: Premature Case Closure (3), Lacked Care & Attention (5), and Incomplete Information Provided (6 L3 instances).</div>
+    </div>
+    <div class="insight-box green">
+      <div class="insight-title">✅ 87.5% of DSATs Classified as "For Removal"</div>
+      <div class="insight-body">56 of 64 DSATs are attributable to product constraints, integration issues, plan limitations, or customer-driven closures. This is a strong signal that agent performance overall is sound — the DSAT volume reflects <strong>product and policy pain points</strong> more than service quality failures.</div>
+    </div>
+    <div class="insight-box purple">
+      <div class="insight-title">💜 Integration DSATs (HubSpot, Salesforce, Pipedrive) = 11 DSATs</div>
+      <div class="insight-body">HubSpot alone accounts for 6 DSATs. Integration issues are consistently showing up as a friction zone. Recommend flagging to the <strong>Product/Integrations team</strong> for a stability review, and ensuring agents have updated troubleshooting runbooks for HubSpot multi-workspace scenarios.</div>
+    </div>`;
 }
 
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  const btn = document.querySelector('[data-page="' + id + '"]');
-  if (btn) btn.classList.add('active');
+// ─── Populate agent filter dropdown ──────────────
+function populateAgentFilter() {
+  const agents = [...new Set(RAW_DATA.log_rows.map(r=>r.agent).filter(Boolean))].sort();
+  const sel = document.getElementById('filterAgent');
+  agents.forEach(a=>{ const o=document.createElement('option'); o.value=a; o.textContent=a; sel.appendChild(o); });
 }
 
-// ── INIT ─────────────────────────────────────────────────────
-renderLog(LOG_DATA);
-renderCoaching();
-renderInsights();
+// ─── Full re-render on filter change ─────────────
+function onFilterChange() {
+  const activePage = document.querySelector('.page.active')?.id?.replace('page-','');
+  if (activePage==='dashboard') renderDashboard();
+  else if (activePage==='weekly') renderWeeklyTab();
+  else if (activePage==='log') { logPage=1; renderLog(); }
+  else if (activePage==='coaching') renderCoaching();
+  else if (activePage==='insights') renderInsights();
+}
 
-// Wire up nav tabs
-document.querySelectorAll('.nav-tab[data-page]').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    showPage(this.getAttribute('data-page'));
+// ─── Tab switching ─────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    const page = document.getElementById('page-'+tab.dataset.page);
+    if (page) page.classList.add('active');
+    onFilterChange();
   });
 });
 
-// Wire up log filters
-document.getElementById('filter-l1').addEventListener('change', filterLog);
-document.getElementById('filter-valid').addEventListener('change', filterLog);
+// ─── Filter event listeners ───────────────────────
+document.getElementById('dateFrom').addEventListener('change', e=>{ filterDateFrom=e.target.value; onFilterChange(); });
+document.getElementById('dateTo').addEventListener('change',   e=>{ filterDateTo=e.target.value;   onFilterChange(); });
+document.getElementById('filterL1').addEventListener('change', e=>{ filterL1=e.target.value;       onFilterChange(); });
+document.getElementById('filterAgent').addEventListener('change',e=>{ filterAgent=e.target.value; onFilterChange(); });
+
+document.querySelectorAll('[data-filter-rec]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('[data-filter-rec]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filterRec=btn.dataset.filterRec;
+    onFilterChange();
+  });
+});
+
+document.getElementById('resetFilters').addEventListener('click', ()=>{
+  filterDateFrom='2026-04-01'; filterDateTo='2026-04-30';
+  filterL1=''; filterRec='all'; filterAgent=''; logSearch='';
+  document.getElementById('dateFrom').value='2026-04-01';
+  document.getElementById('dateTo').value='2026-04-30';
+  document.getElementById('filterL1').value='';
+  document.getElementById('filterAgent').value='';
+  document.getElementById('logSearch').value='';
+  document.querySelectorAll('[data-filter-rec]').forEach(b=>b.classList.remove('active'));
+  document.querySelector('[data-filter-rec="all"]').classList.add('active');
+  onFilterChange();
+});
+
+document.getElementById('logSearch').addEventListener('input', e=>{ logSearch=e.target.value; logPage=1; renderLog(); });
+
+// ─── Init ─────────────────────────────────────────
+populateAgentFilter();
+renderDashboard();
 </script>
 </body>
 </html>
